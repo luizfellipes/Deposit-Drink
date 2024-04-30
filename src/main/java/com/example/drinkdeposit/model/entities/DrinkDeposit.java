@@ -1,7 +1,9 @@
 package com.example.drinkdeposit.model.entities;
 
 import com.example.drinkdeposit.model.enums.DrinkType;
+import com.example.drinkdeposit.model.enums.MovimentType;
 import jakarta.persistence.*;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -16,21 +18,22 @@ public class DrinkDeposit implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Integer id;
-    @Enumerated
-    private DrinkType drinkType;
-    private String drinkName;
-    private Double volume;
+
     private LocalDateTime data;
+    @Enumerated
+    private MovimentType movimentType;
+    @Embedded
+    private Section section;
 
     public DrinkDeposit() {
     }
 
-    public DrinkDeposit(DrinkType drinkType, String drinkName, Double volume, LocalDateTime data) {
-        this.drinkType = drinkType;
-        this.drinkName = drinkName;
-        this.volume = volume;
+    public DrinkDeposit(LocalDateTime data, MovimentType movimentType, Section section) {
         this.data = data;
+        this.movimentType = movimentType;
+        this.section = section;
     }
+
 
     public Integer getId() {
         return id;
@@ -40,30 +43,6 @@ public class DrinkDeposit implements Serializable {
         this.id = id;
     }
 
-    public DrinkType getDrinkType() {
-        return drinkType;
-    }
-
-    public void setDrinkType(DrinkType drinkType) {
-        this.drinkType = drinkType;
-    }
-
-    public String getDrinkName() {
-        return drinkName;
-    }
-
-    public void setDrinkName(String drinkName) {
-        this.drinkName = drinkName;
-    }
-
-    public Double getVolume() {
-        return volume;
-    }
-
-    public void setVolume(Double volume) {
-        this.volume = volume;
-    }
-
     public LocalDateTime getData() {
         return data;
     }
@@ -71,4 +50,21 @@ public class DrinkDeposit implements Serializable {
     public void setData(LocalDateTime data) {
         this.data = data;
     }
+
+    public MovimentType getMovimentType() {
+        return movimentType;
+    }
+
+    public void setMovimentType(MovimentType movimentType) {
+        this.movimentType = movimentType;
+    }
+
+    public Section getSection() {
+        return section;
+    }
+
+    public void setSection(Section section) {
+        this.section = section;
+    }
+
 }
