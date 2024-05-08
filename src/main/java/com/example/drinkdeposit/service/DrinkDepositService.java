@@ -3,10 +3,9 @@ package com.example.drinkdeposit.service;
 import com.example.drinkdeposit.model.dto.DrinkDepositDTO;
 import com.example.drinkdeposit.model.entities.DrinkDeposit;
 import com.example.drinkdeposit.model.entities.Section;
+import com.example.drinkdeposit.model.enums.MovimentType;
 import com.example.drinkdeposit.repositories.DrinkDepositRepository;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,14 +21,30 @@ public class DrinkDepositService {
     }
 
 
-    public DrinkDeposit save(DrinkDepositDTO drinkDepositDTO) {
+    public DrinkDeposit saveSell(DrinkDepositDTO drinkDepositDTO) {
         return Stream.of(convertDtoInModel(drinkDepositDTO))
+                .filter(drinkDeposit -> drinkDeposit.getMovimentType() == MovimentType.SELL)
                 .map(drinkDeposit -> {
                     drinkDeposit.getSection().addDrink(drinkDeposit.getSection().getDrinkType());
-                    return repository.save(convertDtoInModel(drinkDepositDTO));
+                    return repository.save(drinkDeposit);
                 })
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new RuntimeException("não foi possivel realizar a venda !"));
+    }
+
+    public DrinkDeposit saveEntry(DrinkDepositDTO drinkDepositDTO) {
+        return Stream.of(convertDtoInModel(drinkDepositDTO))
+                .filter(drinkDeposit -> drinkDeposit.getMovimentType() == MovimentType.ENTRY)
+                .map(drinkDeposit -> {
+                    drinkDeposit.getSection().addDrink(drinkDeposit.getSection().getDrinkType());
+                    return repository.save(drinkDeposit);
+                })
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("não foi possivel realizar a entrada !"));
+    }
+
+    public List<String> getVolume() {
+        return Optional.of(repository.findTotalVolume()).orElseThrow();
     }
 
     public List<DrinkDeposit> getAll() {
