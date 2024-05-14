@@ -2,7 +2,6 @@ package com.example.drinkdeposit.controller;
 
 import com.example.drinkdeposit.model.dto.DrinkDepositDTO;
 import com.example.drinkdeposit.model.entities.DrinkDeposit;
-import com.example.drinkdeposit.model.entities.Section;
 import com.example.drinkdeposit.service.DrinkDepositService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -40,5 +39,10 @@ public class DrinkDepositController {
     @GetMapping("/volume")
     public ResponseEntity<List<String>> getVolume(){
         return ResponseEntity.status(HttpStatus.OK).body(depositService.getVolume());
+    }
+
+    @GetMapping("/volumePerSale")
+    public ResponseEntity<List<String>> getSectionForSale(){
+        return ResponseEntity.status(HttpStatus.OK).body(depositService.getSectionForSale());
     }
 }

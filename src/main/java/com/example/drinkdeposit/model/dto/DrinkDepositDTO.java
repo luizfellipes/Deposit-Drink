@@ -5,5 +5,5 @@ import com.example.drinkdeposit.model.enums.MovimentType;
 
 import java.time.LocalDateTime;
 
-public record DrinkDepositDTO(LocalDateTime data, MovimentType movimentType, SectionDTO section) {
+public record DrinkDepositDTO(LocalDateTime data, MovimentType movimentType, String responsible, DrinkDTO drink) {
 }

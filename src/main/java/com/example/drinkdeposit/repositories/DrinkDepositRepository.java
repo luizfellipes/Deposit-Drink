@@ -16,4 +16,7 @@ public interface DrinkDepositRepository extends JpaRepository<DrinkDeposit, Inte
             "FROM TB_DRINK_DEPOSIT\n" +
             "GROUP BY DRINK_TYPE;", nativeQuery = true)
     List<String> findTotalVolume();
+
+    @Query(value = "SELECT VOLUME FROM TB_DRINK_DEPOSIT GROUP BY DRINK_TYPE", nativeQuery = true)
+    List<String> findVolume();
 }
