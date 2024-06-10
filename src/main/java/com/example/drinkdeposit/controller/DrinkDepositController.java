@@ -21,14 +21,9 @@ public class DrinkDepositController {
         this.depositService = depositService;
     }
 
-    @PostMapping("/sell")
+    @PostMapping("/save")
     public ResponseEntity<DrinkDeposit> saveSell(@RequestBody @Valid DrinkDepositDTO drinkDepositDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(depositService.saveSell(drinkDepositDTO));
-    }
-
-    @PostMapping("/entry")
-    public ResponseEntity<DrinkDeposit> saveEntry(@RequestBody @Valid DrinkDepositDTO drinkDepositDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(depositService.saveEntry(drinkDepositDTO));
+        return ResponseEntity.status(HttpStatus.CREATED).body(depositService.save(drinkDepositDTO));
     }
 
     @GetMapping

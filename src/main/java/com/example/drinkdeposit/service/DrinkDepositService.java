@@ -21,28 +21,27 @@ public class DrinkDepositService {
     }
 
 
-    public DrinkDeposit saveSell(DrinkDepositDTO drinkDepositDTO) {
+    public DrinkDeposit save(DrinkDepositDTO drinkDepositDTO) {
         return Stream.of(convertDtoInModel(drinkDepositDTO))
-                .filter(drinkDeposit -> drinkDeposit.getMovimentType() == MovimentType.SELL)
+                .filter(drinkDeposit -> drinkDeposit.getMovimentType().equals(MovimentType.SELL) || drinkDeposit.getMovimentType().equals(MovimentType.ENTRY))
                 .map(repository::save)
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("não foi possivel realizar a entrada !"));
     }
 
-    public DrinkDeposit saveEntry(DrinkDepositDTO drinkDepositDTO) {
-        return Stream.of(convertDtoInModel(drinkDepositDTO))
-                .filter(drinkDeposit -> drinkDeposit.getMovimentType() == MovimentType.ENTRY)
-                .map(repository::save)
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("não foi possivel realizar a entrada !"));
-    }
 
     public List<DrinkDeposit> getAll() {
         return Optional.of(repository.findAll()).orElseThrow();
     }
 
     public DrinkDeposit convertDtoInModel(DrinkDepositDTO DTO) {
-        return new DrinkDeposit(DTO.data(), DTO.movimentType(), DTO.responsible(), DTO.section(), new Drink(DTO.drink().drinkType(), DTO.drink().drinkName(), DTO.drink().volume()));
+        return new DrinkDeposit(DTO.data(),
+                DTO.movimentType(),
+                DTO.responsible(),
+                DTO.section(),
+                new Drink(DTO.drink().getDrinkType(),
+                        DTO.drink().getDrinkName(),
+                        DTO.drink().getVolume()));
     }
 
 

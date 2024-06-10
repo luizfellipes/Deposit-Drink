@@ -3,7 +3,6 @@ package com.example.drinkdeposit.model.entities;
 import com.example.drinkdeposit.model.enums.MovimentType;
 import jakarta.persistence.*;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -31,6 +30,7 @@ public class DrinkDeposit implements Serializable {
     @Column(insertable = false, updatable = false)
     private DrinkHistory drinkHistory;
 
+
     public DrinkDeposit() {
     }
 
@@ -48,18 +48,10 @@ public class DrinkDeposit implements Serializable {
         this.data = data;
         this.movimentType = movimentType;
         this.responsible = responsible;
-        this.drink = drink;
         this.section = section;
-    }
-
-    public DrinkDeposit(Integer id, LocalDateTime data, Drink drink, DrinkHistory drinkHistory) {
-        this.id = id;
-        this.data = data;
         this.drink = drink;
-        this.drinkHistory = drinkHistory;
-
+        drink.updateCurrentVolumes(movimentType);
     }
-
 
     public Integer getId() {
         return id;
@@ -116,6 +108,5 @@ public class DrinkDeposit implements Serializable {
     public void setResponsible(String responsible) {
         this.responsible = responsible;
     }
-
 
 }
