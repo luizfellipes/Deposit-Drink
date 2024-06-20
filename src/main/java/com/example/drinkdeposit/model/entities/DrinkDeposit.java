@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Value;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -24,17 +26,16 @@ public class DrinkDeposit implements Serializable {
     private MovimentType movimentType;
     private String responsible;
     @Value("${drink.section}")
-    private String[] section;
+    private List<String> section;
     @OneToOne(cascade = CascadeType.ALL)
     private Drink drink;
-    @Column(insertable = false, updatable = false)
     private DrinkHistory drinkHistory;
 
 
     public DrinkDeposit() {
     }
 
-    public DrinkDeposit(Integer id, String[] section) {
+    public DrinkDeposit(Integer id, List<String> section) {
         this.id = id;
         this.section = section;
     }
@@ -44,7 +45,7 @@ public class DrinkDeposit implements Serializable {
         this.drink = drink;
     }
 
-    public DrinkDeposit(LocalDateTime data, MovimentType movimentType, String responsible, String[] section, Drink drink) {
+    public DrinkDeposit(LocalDateTime data, MovimentType movimentType, String responsible, List<String> section, Drink drink) {
         this.data = data;
         this.movimentType = movimentType;
         this.responsible = responsible;
@@ -57,56 +58,33 @@ public class DrinkDeposit implements Serializable {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public LocalDateTime getData() {
         return data;
-    }
-
-    public void setData(LocalDateTime data) {
-        this.data = data;
     }
 
     public MovimentType getMovimentType() {
         return movimentType;
     }
 
-    public void setMovimentType(MovimentType movimentType) {
-        this.movimentType = movimentType;
+    public String getResponsible() {
+        return responsible;
+    }
+
+    public List<String> getSection() {
+        return section;
     }
 
     public Drink getDrink() {
         return drink;
     }
 
-    public void setDrink(Drink drink) {
-        this.drink = drink;
-    }
-
     public DrinkHistory getDrinkHistory() {
         return drinkHistory;
     }
 
-    public String[] getSection() {
-        return section;
-    }
+   /*public void addSection(){
+    section.add(drink.getVolume(), drink.getCurrentAlcoholicVolume(), drink.getCurrentNonAlcoholicVolume());
+    }*/
 
-    public void setSection(String[] section) {
-        this.section = section;
-    }
-
-    public void setDrinkHistory(DrinkHistory drinkHistory) {
-        this.drinkHistory = drinkHistory;
-    }
-
-    public String getResponsible() {
-        return responsible;
-    }
-
-    public void setResponsible(String responsible) {
-        this.responsible = responsible;
-    }
 
 }

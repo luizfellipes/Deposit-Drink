@@ -1,27 +1,32 @@
-/*
 package com.example.drinkdeposit.model.entities;
 
 import jakarta.persistence.*;
-import org.springframework.beans.factory.annotation.Value;
-
-import org.springframework.context.annotation.Configuration;
-
 
 import java.io.Serial;
 import java.io.Serializable;
 
 @Entity
 @Table(name = "TB_DRINK_CONFIG")
-public abstract class DrinkConfig implements Serializable {
+public class DrinkConfig implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Integer id;
-    private final static int MAX_ALCOHOLIC_CAPACITY = 500;
-    private final static int MAX_NONALCOHOLIC_CAPACITY = 400;
+    private Integer id = 1;
+    private int MAX_ALCOHOLIC_CAPACITY = 500;
+    private int MAX_NONALCOHOLIC_CAPACITY = 400;
+
+    public DrinkConfig() {
+    }
+
+    public DrinkConfig(Integer id, int MAX_ALCOHOLIC_CAPACITY, int MAX_NONALCOHOLIC_CAPACITY) {
+        this.id = id;
+        this.MAX_ALCOHOLIC_CAPACITY = MAX_ALCOHOLIC_CAPACITY;
+        this.MAX_NONALCOHOLIC_CAPACITY = MAX_NONALCOHOLIC_CAPACITY;
+    }
+
 
     public Integer getId() {
         return id;
@@ -40,4 +45,3 @@ public abstract class DrinkConfig implements Serializable {
     }
 
 }
-*/

@@ -1,11 +1,14 @@
 package com.example.drinkdeposit.model.entities;
 
+import com.example.drinkdeposit.exceptions.IlegalRequest;
 import com.example.drinkdeposit.model.enums.DrinkType;
 import com.example.drinkdeposit.model.enums.MovimentType;
 import jakarta.persistence.*;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 import java.util.stream.Stream;
 
 @Entity
@@ -21,27 +24,26 @@ public class Drink implements Serializable {
     @Enumerated(EnumType.STRING)
     private DrinkType drinkType;
     private String drinkName;
-    @Column(insertable = false, updatable = false)
+    @Column(insertable = true, updatable = true)
     private int volume;
     private int currentAlcoholicVolume;
     private int currentNonAlcoholicVolume;
-    private int MAX_ALCOHOLIC_CAPACITY = 500;
-    private int MAX_NONALCOHOLIC_CAPACITY = 400;
-    private DrinkDeposit drinkDeposit;
+    @OneToOne(cascade = CascadeType.ALL)
+    private DrinkConfig drinkConfig;
+
 
     public Drink() {
     }
 
-    public Drink(Integer id, int MAX_ALCOHOLIC_CAPACITY, int MAX_NONALCOHOLIC_CAPACITY) {
-        this.id = id;
-        this.MAX_ALCOHOLIC_CAPACITY = MAX_ALCOHOLIC_CAPACITY;
-        this.MAX_NONALCOHOLIC_CAPACITY = MAX_NONALCOHOLIC_CAPACITY;
+    public Drink(DrinkConfig drinkConfig) {
+        this.drinkConfig = drinkConfig;
     }
 
     public Drink(DrinkType drinkType, String drinkName, int volume) {
         this.drinkType = drinkType;
         this.drinkName = drinkName;
         this.volume = volume;
+        this.drinkConfig = new DrinkConfig();
     }
 
     public Integer getId() {
@@ -71,7 +73,7 @@ public class Drink implements Serializable {
 
     public void updateCurrentVolumes(MovimentType movimentType) {
         Stream.of(DrinkType.ALCOHOLIC, DrinkType.NONALCOHOLIC)
-                .filter(drinkType1 -> this.currentAlcoholicVolume + this.volume <= this.MAX_ALCOHOLIC_CAPACITY || this.currentNonAlcoholicVolume + this.volume <= this.MAX_NONALCOHOLIC_CAPACITY)
+                .filter(drinkType1 -> this.currentAlcoholicVolume + this.volume <= drinkConfig.getMAX_ALCOHOLIC_CAPACITY() || this.currentNonAlcoholicVolume + this.volume <= drinkConfig.getMAX_NONALCOHOLIC_CAPACITY())
                 .map(drinkType1 -> {
                     if (movimentType.equals(MovimentType.SELL)) {
                         sellDrink();
@@ -81,35 +83,34 @@ public class Drink implements Serializable {
                     return 0;
                 })
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("não é possivel adicionar o volume, pois excedeu a capacidade de bebidas !"));
+                .orElseThrow(() -> new IlegalRequest("não é possivel adicionar o volume, pois excedeu a capacidade de bebidas !"));
     }
 
-    public boolean isSectionFull() {
+    private boolean isSectionFull() {
         if (drinkType == DrinkType.ALCOHOLIC) {
-            return this.currentAlcoholicVolume <= this.MAX_ALCOHOLIC_CAPACITY;
+            return this.currentAlcoholicVolume <= drinkConfig.getMAX_ALCOHOLIC_CAPACITY();
         } else {
-            return this.currentNonAlcoholicVolume <= this.MAX_NONALCOHOLIC_CAPACITY;
+            return this.currentNonAlcoholicVolume <= drinkConfig.getMAX_NONALCOHOLIC_CAPACITY();
         }
     }
 
-
-    public void entryDrink() {
-        if (DrinkType.ALCOHOLIC.equals(drinkType) && isSectionFull() && this.currentAlcoholicVolume > 0) {
+    private void entryDrink() {
+        if (DrinkType.ALCOHOLIC.equals(drinkType) && isSectionFull() && this.currentAlcoholicVolume >= 0) {
             this.currentAlcoholicVolume += this.volume;
-        } else if (DrinkType.NONALCOHOLIC.equals(drinkType) && isSectionFull() && this.currentNonAlcoholicVolume > 0) {
+        } else if (DrinkType.NONALCOHOLIC.equals(drinkType) && isSectionFull() && this.currentNonAlcoholicVolume >= 0) {
             this.currentNonAlcoholicVolume += this.volume;
-        }else {
-            throw new RuntimeException("não é possivel vender com volume receber bebida com volume menor que 1");
+        } else {
+            throw new IlegalRequest("não é possivel vender com volume receber bebida com volume menor que 1");
         }
     }
 
-    public void sellDrink() {
+    private void sellDrink() {
         if (DrinkType.ALCOHOLIC.equals(drinkType) && isSectionFull() && this.currentAlcoholicVolume > 0) {
             this.currentAlcoholicVolume -= this.volume;
         } else if (DrinkType.NONALCOHOLIC.equals(drinkType) && isSectionFull() && this.currentNonAlcoholicVolume > 0) {
             this.currentNonAlcoholicVolume -= this.volume;
         } else {
-            throw new RuntimeException("não é possivel vender com volume abaixo de 1");
+            throw new IlegalRequest("não é possivel vender com volume abaixo de 1");
         }
     }
 
