@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin
@@ -32,7 +33,7 @@ public class DrinkDepositController {
     }
 
     @GetMapping("/volume")
-    public ResponseEntity<List<Integer>> getAllVolume(){
+    public ResponseEntity<List<Map<String, Object>>> getAllVolume(){
         return ResponseEntity.status(HttpStatus.OK).body(depositService.getAllVolumesPerDrink());
     }
 

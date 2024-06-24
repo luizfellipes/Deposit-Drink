@@ -1,5 +1,6 @@
 package com.example.drinkdeposit.model.entities;
 
+import com.example.drinkdeposit.exceptions.IlegalRequest;
 import com.example.drinkdeposit.model.enums.MovimentType;
 import jakarta.persistence.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -7,8 +8,9 @@ import org.springframework.beans.factory.annotation.Value;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Entity
@@ -30,6 +32,8 @@ public class DrinkDeposit implements Serializable {
     @OneToOne(cascade = CascadeType.ALL)
     private Drink drink;
     private DrinkHistory drinkHistory;
+    @ElementCollection
+    private Map<String, Double> sectionVolumes = new HashMap<>();
 
 
     public DrinkDeposit() {
@@ -53,6 +57,7 @@ public class DrinkDeposit implements Serializable {
         this.drink = drink;
         drink.updateCurrentVolumes(movimentType);
     }
+
 
     public Integer getId() {
         return id;
@@ -82,9 +87,17 @@ public class DrinkDeposit implements Serializable {
         return drinkHistory;
     }
 
-   /*public void addSection(){
-    section.add(drink.getVolume(), drink.getCurrentAlcoholicVolume(), drink.getCurrentNonAlcoholicVolume());
-    }*/
+    public Map<String, Double> getSectionVolumes() {
+        return sectionVolumes;
+    }
 
+    public void updateSectionVolume(String sectionName, int volume, int maxCapacity) {
+        Double currentVolume = sectionVolumes.getOrDefault(sectionName, 0.0);
+        if (currentVolume + volume > maxCapacity) {
+            throw new IlegalRequest("Seção cheia, não foi possivel adicionar mais caixas.");
+        } else {
+            sectionVolumes.put(String.valueOf(section), currentVolume + drink.getVolume());
+        }
+    }
 
 }

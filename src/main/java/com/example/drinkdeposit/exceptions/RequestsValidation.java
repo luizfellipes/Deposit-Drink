@@ -21,4 +21,9 @@ public class RequestsValidation {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new PersonalizedResponse(HttpStatus.BAD_REQUEST.value(), camposVazios));
     }
 
+    @ExceptionHandler(IlegalRequest.class)
+    public ResponseEntity<Object> status400(IlegalRequest exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new PersonalizedResponse(HttpStatus.BAD_REQUEST.value(), exception.getMessage()));
+    }
+
 }
