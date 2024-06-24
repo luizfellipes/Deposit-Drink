@@ -30,7 +30,6 @@ public class Drink implements Serializable {
     private DrinkConfig drinkConfig;
 
 
-
     public Drink() {
     }
 
@@ -77,12 +76,11 @@ public class Drink implements Serializable {
                 .orElseThrow(() -> new IlegalRequest("não é possivel adicionar o volume, pois excedeu a capacidade de bebidas !"));
     }
 
-    private boolean isSectionFull() {
+    public boolean isSectionFull() {
         if (drinkType.equals(DrinkType.ALCOHOLIC)) {
-            return this.currentAlcoholicVolume + this.volume <= drinkConfig.getMAX_ALCOHOLIC_CAPACITY();
-
+            return this.currentAlcoholicVolume + this.volume <= maxCapacity();
         } else {
-            return this.currentNonAlcoholicVolume + this.volume <= drinkConfig.getMAX_NONALCOHOLIC_CAPACITY();
+            return this.currentNonAlcoholicVolume + this.volume <= maxCapacity();
         }
     }
 
@@ -92,7 +90,7 @@ public class Drink implements Serializable {
         } else if (DrinkType.NONALCOHOLIC.equals(drinkType) && isSectionFull() && this.currentNonAlcoholicVolume >= 0) {
             return this.currentNonAlcoholicVolume += this.volume;
         } else {
-            throw new IlegalRequest("não é possivel vender com volume receber bebida com volume menor que 1");
+            throw new IlegalRequest("não é possivel receber bebida com volume menor que 1");
         }
     }
 
@@ -104,6 +102,10 @@ public class Drink implements Serializable {
         } else {
             throw new IlegalRequest("não é possivel vender com volume abaixo de 1");
         }
+    }
+
+    public int maxCapacity() {
+      return drinkType.equals(DrinkType.ALCOHOLIC) ? drinkConfig.getMAX_ALCOHOLIC_CAPACITY() : drinkConfig.getMAX_NONALCOHOLIC_CAPACITY();
     }
 
 

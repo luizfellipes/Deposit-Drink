@@ -91,12 +91,11 @@ public class DrinkDeposit implements Serializable {
         return sectionVolumes;
     }
 
-    public void updateSectionVolume(String sectionName, int volume, int maxCapacity) {
-        Double currentVolume = sectionVolumes.getOrDefault(sectionName, 0.0);
-        if (currentVolume + volume > maxCapacity) {
-            throw new IlegalRequest("Seção cheia, não foi possivel adicionar mais caixas.");
+    public void updateSectionVolume() {
+        if (drink.isSectionFull()) {
+            throw new IlegalRequest("Seção cheia, não foi possivel adicionar mais bebidas.");
         } else {
-            sectionVolumes.put(String.valueOf(section), currentVolume + drink.getVolume());
+            sectionVolumes.put(String.valueOf(section), (double) drink.getVolume());
         }
     }
 

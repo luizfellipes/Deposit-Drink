@@ -35,24 +35,13 @@ public class DrinkDepositService {
     }
 
     public List<Map<String, Object>> getAllVolumesPerDrink() {
-        return Optional.of(repository.findAll().stream()
-                        .map(drinkDeposit -> {
-                            Map<String, Object> data = new HashMap<>();
-                            List<String> sections = drinkDeposit.getSection();
-                            int volume = drinkDeposit.getDrink().getVolume();
-
-                            int maxCapacity = drinkDeposit.getDrink().getDrinkType().equals(DrinkType.ALCOHOLIC) ?
-                                    drinkDeposit.getDrink().getDrinkConfig().getMAX_ALCOHOLIC_CAPACITY() :
-                                    drinkDeposit.getDrink().getDrinkConfig().getMAX_NONALCOHOLIC_CAPACITY();
-
-                            for (String section : sections) {
-                                drinkDeposit.updateSectionVolume(section, volume, maxCapacity);
-                            }
-
-                            data.put("sectionVolumes", drinkDeposit.getSectionVolumes());
-                            return data;
-                        }).toList())
-                .orElseThrow();
+        return repository.findAll().stream()
+                .map(drinkDeposit -> {
+                    drinkDeposit.getSection().forEach(section -> drinkDeposit.updateSectionVolume());
+                    Map<String, Object> data = new HashMap<>();
+                    data.put("sectionVolumes", drinkDeposit.getSectionVolumes());
+                    return data;
+                }).toList();
     }
 
     public DrinkDeposit convertDtoInModel(DrinkDepositDTO DTO) {
