@@ -77,11 +77,7 @@ public class Drink implements Serializable {
     }
 
     public boolean isSectionFull() {
-        if (drinkType.equals(DrinkType.ALCOHOLIC)) {
-            return this.currentAlcoholicVolume + this.volume <= maxCapacity();
-        } else {
-            return this.currentNonAlcoholicVolume + this.volume <= maxCapacity();
-        }
+        return getCurrentVolume() + volume <= maxCapacity() && volume >= getCurrentVolume();
     }
 
     private int entryDrink() {
@@ -105,7 +101,11 @@ public class Drink implements Serializable {
     }
 
     public int maxCapacity() {
-      return drinkType.equals(DrinkType.ALCOHOLIC) ? drinkConfig.getMAX_ALCOHOLIC_CAPACITY() : drinkConfig.getMAX_NONALCOHOLIC_CAPACITY();
+        return drinkType.equals(DrinkType.ALCOHOLIC) ? drinkConfig.getMAX_ALCOHOLIC_CAPACITY() : drinkConfig.getMAX_NONALCOHOLIC_CAPACITY();
+    }
+
+    private int getCurrentVolume() {
+        return DrinkType.ALCOHOLIC.equals(drinkType) ? currentAlcoholicVolume : currentNonAlcoholicVolume;
     }
 
 
