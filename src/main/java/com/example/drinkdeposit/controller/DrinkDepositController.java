@@ -33,7 +33,7 @@ public class DrinkDepositController {
     }
 
     @GetMapping("/volume")
-    public ResponseEntity<List<Map<String, Object>>> getAllVolume(){
+    public ResponseEntity<List<Map<String, Integer>>> getAllVolume(){
         return ResponseEntity.status(HttpStatus.OK).body(depositService.getAllVolumesPerDrink());
     }
 

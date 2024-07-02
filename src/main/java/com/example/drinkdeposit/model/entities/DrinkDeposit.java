@@ -3,13 +3,11 @@ package com.example.drinkdeposit.model.entities;
 import com.example.drinkdeposit.exceptions.IlegalRequest;
 import com.example.drinkdeposit.model.enums.MovimentType;
 import jakarta.persistence.*;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -27,21 +25,13 @@ public class DrinkDeposit implements Serializable {
     @Enumerated(EnumType.STRING)
     private MovimentType movimentType;
     private String responsible;
-    @Value("${drink.section}")
-    private List<String> section;
     @OneToOne(cascade = CascadeType.ALL)
     private Drink drink;
-    private DrinkHistory drinkHistory;
     @ElementCollection
-    private Map<String, Double> sectionVolumes = new HashMap<>();
+    private final Map<String, Integer> sectionVolumes = new HashMap<>();
 
 
     public DrinkDeposit() {
-    }
-
-    public DrinkDeposit(Integer id, List<String> section) {
-        this.id = id;
-        this.section = section;
     }
 
     public DrinkDeposit(Integer id, Drink drink) {
@@ -49,11 +39,10 @@ public class DrinkDeposit implements Serializable {
         this.drink = drink;
     }
 
-    public DrinkDeposit(LocalDateTime data, MovimentType movimentType, String responsible, List<String> section, Drink drink) {
+    public DrinkDeposit(LocalDateTime data, MovimentType movimentType, String responsible, Drink drink) {
         this.data = data;
         this.movimentType = movimentType;
         this.responsible = responsible;
-        this.section = section;
         this.drink = drink;
         drink.updateCurrentVolumes(movimentType);
     }
@@ -75,27 +64,20 @@ public class DrinkDeposit implements Serializable {
         return responsible;
     }
 
-    public List<String> getSection() {
-        return section;
-    }
-
     public Drink getDrink() {
         return drink;
     }
 
-    public DrinkHistory getDrinkHistory() {
-        return drinkHistory;
-    }
-
-    public Map<String, Double> getSectionVolumes() {
+    public Map<String, Integer> getSectionVolumes() {
         return sectionVolumes;
     }
 
-    public void updateSectionVolume() {
+    public Map<String, Integer> updateSectionVolume() {
         if (drink.isSectionFull()) {
             throw new IlegalRequest("Seção cheia, não foi possivel adicionar mais bebidas.");
         } else {
-            sectionVolumes.put(String.valueOf(section), (double) drink.getVolume());
+            sectionVolumes.put("Section: " + drink.getSection(), drink.getVolume());
+            return sectionVolumes;
         }
     }
 

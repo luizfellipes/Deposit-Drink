@@ -4,6 +4,7 @@ import com.example.drinkdeposit.exceptions.IlegalRequest;
 import com.example.drinkdeposit.model.enums.DrinkType;
 import com.example.drinkdeposit.model.enums.MovimentType;
 import jakarta.persistence.*;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -22,7 +23,8 @@ public class Drink implements Serializable {
     @Enumerated(EnumType.STRING)
     private DrinkType drinkType;
     private String drinkName;
-    @Column(insertable = true, updatable = true)
+    @Value("${drink.section}")
+    private String section;
     private int volume;
     private int currentAlcoholicVolume;
     private int currentNonAlcoholicVolume;
@@ -37,10 +39,11 @@ public class Drink implements Serializable {
         this.drinkConfig = drinkConfig;
     }
 
-    public Drink(DrinkType drinkType, String drinkName, int volume) {
+    public Drink(DrinkType drinkType, String drinkName, int volume, String section) {
         this.drinkType = drinkType;
         this.drinkName = drinkName;
         this.volume = volume;
+        this.section = section;
         this.drinkConfig = new DrinkConfig();
     }
 
@@ -60,13 +63,14 @@ public class Drink implements Serializable {
         return volume;
     }
 
+    public String getSection() {
+        return section;
+    }
+
     public DrinkConfig getDrinkConfig() {
         return drinkConfig;
     }
 
-    public void setVolume(int volume) {
-        this.volume = volume;
-    }
 
     public void updateCurrentVolumes(MovimentType movimentType) {
         Stream.of(movimentType)
@@ -77,13 +81,21 @@ public class Drink implements Serializable {
     }
 
     public boolean isSectionFull() {
-        return getCurrentVolume() + volume <= maxCapacity() && volume >= getCurrentVolume();
+        return getCurrentVolume() + volume <= maxCapacity();
+    }
+
+    public int maxCapacity() {
+        return drinkType.equals(DrinkType.ALCOHOLIC) ? drinkConfig.getMAX_ALCOHOLIC_CAPACITY() : drinkConfig.getMAX_NONALCOHOLIC_CAPACITY();
+    }
+
+    public int getCurrentVolume() {
+        return drinkType.equals(DrinkType.ALCOHOLIC) ? currentAlcoholicVolume : currentNonAlcoholicVolume;
     }
 
     private int entryDrink() {
-        if (DrinkType.ALCOHOLIC.equals(drinkType) && isSectionFull() && this.currentAlcoholicVolume >= 0) {
+        if (drinkType.equals(DrinkType.ALCOHOLIC) && isSectionFull() && this.currentAlcoholicVolume >= 0) {
             return this.currentAlcoholicVolume += this.volume;
-        } else if (DrinkType.NONALCOHOLIC.equals(drinkType) && isSectionFull() && this.currentNonAlcoholicVolume >= 0) {
+        } else if (drinkType.equals(DrinkType.NONALCOHOLIC) && isSectionFull() && this.currentNonAlcoholicVolume >= 0) {
             return this.currentNonAlcoholicVolume += this.volume;
         } else {
             throw new IlegalRequest("não é possivel receber bebida com volume menor que 1");
@@ -91,21 +103,13 @@ public class Drink implements Serializable {
     }
 
     private int sellDrink() {
-        if (DrinkType.ALCOHOLIC.equals(drinkType) && isSectionFull() && this.currentAlcoholicVolume > 0) {
+        if (drinkType.equals(DrinkType.ALCOHOLIC) && isSectionFull() && this.currentAlcoholicVolume > 0) {
             return this.currentAlcoholicVolume -= this.volume;
-        } else if (DrinkType.NONALCOHOLIC.equals(drinkType) && isSectionFull() && this.currentNonAlcoholicVolume > 0) {
+        } else if (drinkType.equals(DrinkType.NONALCOHOLIC) && isSectionFull() && this.currentNonAlcoholicVolume > 0) {
             return this.currentNonAlcoholicVolume -= this.volume;
         } else {
             throw new IlegalRequest("não é possivel vender com volume abaixo de 1");
         }
-    }
-
-    public int maxCapacity() {
-        return drinkType.equals(DrinkType.ALCOHOLIC) ? drinkConfig.getMAX_ALCOHOLIC_CAPACITY() : drinkConfig.getMAX_NONALCOHOLIC_CAPACITY();
-    }
-
-    private int getCurrentVolume() {
-        return DrinkType.ALCOHOLIC.equals(drinkType) ? currentAlcoholicVolume : currentNonAlcoholicVolume;
     }
 
 
