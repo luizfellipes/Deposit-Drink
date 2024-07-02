@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
 
+import static com.example.drinkdeposit.MocksDTO.DrinkDepositDTOMock.drinkDepositDtoMock;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -45,11 +46,11 @@ class DrinkDepositControllerTest {
 
     @Test
     void makeTestOnNewCreate() throws Exception {
-        when(drinkDepositService.save(any())).thenReturn(any());
+        when(drinkDepositService.save(drinkDepositDtoMock())).thenReturn(any());
 
         mockMvc.perform(post("/drinkdeposit/save")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(objectMapper.writeValueAsString(any())))
+                        .content(objectMapper.writeValueAsString(drinkDepositDtoMock())))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andReturn();
