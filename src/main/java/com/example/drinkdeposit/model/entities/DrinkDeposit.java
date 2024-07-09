@@ -7,9 +7,6 @@ import jakarta.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-
 
 @Entity
 @Table(name = "TB_DRINK_DEPOSIT")
@@ -22,13 +19,11 @@ public class DrinkDeposit implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Integer id;
     private LocalDateTime data;
-    @Enumerated(EnumType.STRING)
-    private MovimentType movimentType;
     private String responsible;
+    private String section;
+    private MovimentType movimentType;
     @OneToOne(cascade = CascadeType.ALL)
     private Drink drink;
-    @ElementCollection
-    private final Map<String, Integer> sectionVolumes = new HashMap<>();
 
 
     public DrinkDeposit() {
@@ -39,14 +34,13 @@ public class DrinkDeposit implements Serializable {
         this.drink = drink;
     }
 
-    public DrinkDeposit(LocalDateTime data, MovimentType movimentType, String responsible, Drink drink) {
+    public DrinkDeposit(LocalDateTime data, String responsible, String section, MovimentType movimentType, Drink drink) {
         this.data = data;
-        this.movimentType = movimentType;
         this.responsible = responsible;
+        this.section = section;
+        this.movimentType = movimentType;
         this.drink = drink;
-        drink.updateCurrentVolumes(movimentType);
     }
-
 
     public Integer getId() {
         return id;
@@ -68,17 +62,7 @@ public class DrinkDeposit implements Serializable {
         return drink;
     }
 
-    public Map<String, Integer> getSectionVolumes() {
-        return sectionVolumes;
+    public String getSection() {
+        return section;
     }
-
-    public Map<String, Integer> updateSectionVolume() {
-        if (drink.isSectionFull()) {
-            throw new IlegalRequest("Seção cheia, não foi possivel adicionar mais bebidas.");
-        } else {
-            sectionVolumes.put("Section: " + drink.getSection(), drink.getVolume());
-            return sectionVolumes;
-        }
-    }
-
 }

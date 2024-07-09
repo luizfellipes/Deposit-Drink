@@ -15,6 +15,8 @@ public record DrinkDepositDTO(
         MovimentType movimentType,
         @NotBlank(message = "Insira o responsavel da movimentação.")
         String responsible,
+        @NotNull(message = "Insira uma seção valida !")
+        String section,
         @Valid
         @NotNull
         DrinkDTO drink) {

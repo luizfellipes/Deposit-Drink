@@ -2,13 +2,12 @@ package com.example.drinkdeposit.model.entities;
 
 import com.example.drinkdeposit.exceptions.IlegalRequest;
 import com.example.drinkdeposit.model.enums.DrinkType;
+
 import com.example.drinkdeposit.model.enums.MovimentType;
 import jakarta.persistence.*;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.stream.Stream;
 
 @Entity
 @Table(name = "TB_DRINK")
@@ -22,29 +21,22 @@ public class Drink implements Serializable {
     private Integer id;
     @Enumerated(EnumType.STRING)
     private DrinkType drinkType;
+    private Double volume;
     private String drinkName;
-    @Value("${drink.section}")
-    private String section;
-    private int volume;
-    private int currentAlcoholicVolume;
-    private int currentNonAlcoholicVolume;
-    @ManyToOne(cascade = CascadeType.ALL)
+    private Double totalVolumeInSection;
+    @Lob
+    @Column(name = "drink_config", columnDefinition = "BLOB")
     private DrinkConfig drinkConfig;
 
 
     public Drink() {
     }
 
-    public Drink(DrinkConfig drinkConfig) {
-        this.drinkConfig = drinkConfig;
-    }
-
-    public Drink(DrinkType drinkType, String drinkName, int volume, String section) {
+    public Drink(DrinkType drinkType, String drinkName, Double volume) {
+        iniciateConfig();
         this.drinkType = drinkType;
         this.drinkName = drinkName;
-        this.volume = volume;
-        this.section = section;
-        this.drinkConfig = new DrinkConfig();
+        checkNegativeValues(volume);
     }
 
     public Integer getId() {
@@ -55,62 +47,40 @@ public class Drink implements Serializable {
         return drinkType;
     }
 
-    public String getDrinkName() {
-        return drinkName;
-    }
-
-    public int getVolume() {
+    public Double getVolume() {
         return volume;
     }
 
-    public String getSection() {
-        return section;
+    public Double getTotalVolumeInSection() {
+        return totalVolumeInSection;
     }
 
     public DrinkConfig getDrinkConfig() {
         return drinkConfig;
     }
 
-
-    public void updateCurrentVolumes(MovimentType movimentType) {
-        Stream.of(movimentType)
-                .filter(drinkType1 -> isSectionFull())
-                .map(drinkType1 -> drinkType1.equals(MovimentType.SELL) ? sellDrink() : entryDrink())
-                .findFirst()
-                .orElseThrow(() -> new IlegalRequest("não é possivel adicionar o volume, pois excedeu a capacidade de bebidas !"));
-    }
-
-    public boolean isSectionFull() {
-        return getCurrentVolume() + volume <= maxCapacity();
-    }
-
-    public int maxCapacity() {
-        return drinkType.equals(DrinkType.ALCOHOLIC) ? drinkConfig.getMAX_ALCOHOLIC_CAPACITY() : drinkConfig.getMAX_NONALCOHOLIC_CAPACITY();
-    }
-
-    public int getCurrentVolume() {
-        return drinkType.equals(DrinkType.ALCOHOLIC) ? currentAlcoholicVolume : currentNonAlcoholicVolume;
-    }
-
-    private int entryDrink() {
-        if (drinkType.equals(DrinkType.ALCOHOLIC) && isSectionFull() && this.currentAlcoholicVolume >= 0) {
-            return this.currentAlcoholicVolume += this.volume;
-        } else if (drinkType.equals(DrinkType.NONALCOHOLIC) && isSectionFull() && this.currentNonAlcoholicVolume >= 0) {
-            return this.currentNonAlcoholicVolume += this.volume;
+    private void checkNegativeValues(Double volume) {
+        if (volume <= 0) {
+            throw new IlegalRequest("Não é permitido volumes a baixo de 0");
         } else {
-            throw new IlegalRequest("não é possivel receber bebida com volume menor que 1");
+            this.volume = volume;
         }
     }
 
-    private int sellDrink() {
-        if (drinkType.equals(DrinkType.ALCOHOLIC) && isSectionFull() && this.currentAlcoholicVolume > 0) {
-            return this.currentAlcoholicVolume -= this.volume;
-        } else if (drinkType.equals(DrinkType.NONALCOHOLIC) && isSectionFull() && this.currentNonAlcoholicVolume > 0) {
-            return this.currentNonAlcoholicVolume -= this.volume;
+    public Double maxCapacity() {
+        if (drinkType.equals(DrinkType.ALCOHOLIC)) {
+            return this.getDrinkConfig().getMAX_ALCOHOLIC_CAPACITY();
         } else {
-            throw new IlegalRequest("não é possivel vender com volume abaixo de 1");
+            return this.getDrinkConfig().getMAX_NONALCOHOLIC_CAPACITY();
         }
     }
 
+    public void totalVolumeInSection(Double volumeInSection) {
+        this.totalVolumeInSection = volumeInSection;
+    }
+
+    private void iniciateConfig() {
+        this.drinkConfig = new DrinkConfig();
+    }
 
 }

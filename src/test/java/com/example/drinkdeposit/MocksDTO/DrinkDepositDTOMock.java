@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 public abstract class DrinkDepositDTOMock {
 
     public static DrinkDepositDTO drinkDepositDtoMock() {
-        return new DrinkDepositDTO(LocalDateTime.parse("2021-01-01T18:30:00"), MovimentType.SELL, "employee",
-                new DrinkDTO(DrinkType.ALCOHOLIC, "Beer", 350, "A"));
+        return new DrinkDepositDTO(LocalDateTime.parse("2021-01-01T18:30:00"), MovimentType.EXIT, "employee", "a",
+                new DrinkDTO(DrinkType.ALCOHOLIC, "Beer", 350.0));
     }
 
 

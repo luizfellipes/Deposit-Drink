@@ -10,7 +10,5 @@ public record DrinkDTO(
         @NotBlank(message = "Insira o nome da bebida !")
         String drinkName,
         @NotNull(message = "Insira o volume desejado !")
-        int volume,
-        @NotNull(message = "Insira uma seção valida !")
-        String section) {
+        Double volume) {
 }
