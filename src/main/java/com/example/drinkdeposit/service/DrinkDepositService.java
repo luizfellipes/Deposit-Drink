@@ -6,6 +6,7 @@ import com.example.drinkdeposit.exceptions.IlegalRequest;
 import com.example.drinkdeposit.model.dto.DrinkDepositDTO;
 import com.example.drinkdeposit.model.entities.DrinkDeposit;
 import com.example.drinkdeposit.model.entities.Drink;
+import com.example.drinkdeposit.model.enums.DrinkType;
 import com.example.drinkdeposit.model.enums.MovimentType;
 import com.example.drinkdeposit.repositories.DrinkDepositRepository;
 import org.springframework.stereotype.Service;
@@ -60,8 +61,9 @@ public class DrinkDepositService {
     private Double totalVolumeOnSection(DrinkDeposit drinkDeposit) {
         return repository.findBySectionOrderByIdDesc(drinkDeposit.getSection())
                 .stream()
-                .mapToDouble(drinkDeposit1 -> drinkDeposit1.getDrink().getVolume())
-                .sum();
+                .findFirst()
+                .map(drinkDeposit1 -> drinkDeposit1.getDrink().getTotalVolumeInSection())
+                .orElse(0.0);
     }
 
     private boolean sectionExists(DrinkDeposit drinkDeposit) {
@@ -91,7 +93,7 @@ public class DrinkDepositService {
     }
 
     private void excessVolume(DrinkDeposit drinkDeposit) {
-        if (totalVolumeOnSection(drinkDeposit) + drinkDeposit.getDrink().getVolume() > drinkDeposit.getDrink().maxCapacity()) {
+        if (drinkDeposit.getMovimentType().equals(MovimentType.ENTRY) && totalVolumeOnSection(drinkDeposit) + drinkDeposit.getDrink().getVolume() > drinkDeposit.getDrink().maxCapacity()) {
             throw new EntryError("Não foi possível adicionar na seção pois o volume total foi excedente!");
         }
     }
