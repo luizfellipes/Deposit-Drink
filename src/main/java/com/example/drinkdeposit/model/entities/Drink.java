@@ -3,7 +3,6 @@ package com.example.drinkdeposit.model.entities;
 import com.example.drinkdeposit.exceptions.IlegalRequest;
 import com.example.drinkdeposit.model.enums.DrinkType;
 
-import com.example.drinkdeposit.model.enums.MovimentType;
 import jakarta.persistence.*;
 
 import java.io.Serial;
@@ -24,7 +23,6 @@ public class Drink implements Serializable {
     private Double volume;
     private String drinkName;
     private Double totalVolumeInSection;
-    @Lob
     @Column(name = "drink_config", columnDefinition = "BLOB")
     private DrinkConfig drinkConfig;
 
@@ -37,6 +35,7 @@ public class Drink implements Serializable {
         this.drinkType = drinkType;
         this.drinkName = drinkName;
         checkNegativeValues(volume);
+        this.totalVolumeInSection = 0.0;
     }
 
     public Integer getId() {
@@ -51,7 +50,11 @@ public class Drink implements Serializable {
         return volume;
     }
 
-    public Double getTotalVolumeInSection() {
+    public String getDrinkName() {
+        return drinkName;
+    }
+
+    public double getTotalVolumeInSection() {
         return totalVolumeInSection;
     }
 
@@ -75,8 +78,12 @@ public class Drink implements Serializable {
         }
     }
 
-    public void totalVolumeInSection(Double volumeInSection) {
-        this.totalVolumeInSection = volumeInSection;
+    public Double totalVolumeInSection(Double volumeInSection) {
+        if (volumeInSection < 0) {
+            throw new IlegalRequest("não é possivel inserir volumes abaixo de 0 !");
+        } else {
+         return this.totalVolumeInSection = volumeInSection;
+        }
     }
 
     private void iniciateConfig() {

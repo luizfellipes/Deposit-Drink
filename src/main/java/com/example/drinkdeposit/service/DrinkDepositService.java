@@ -11,6 +11,7 @@ import com.example.drinkdeposit.repositories.DrinkDepositRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -26,15 +27,14 @@ public class DrinkDepositService {
         return Stream.of(convertDtoInModel(drinkDepositDTO))
                 .map(drinkDeposit -> {
                     verifySectionPermit(drinkDeposit);
+                    entryAndExitOfstock(drinkDeposit);
                     sectionCapacity(drinkDeposit);
                     excessVolume(drinkDeposit);
-                    entryAndExitOfstock(drinkDeposit);
                     return repository.save(drinkDeposit);
                 })
                 .findFirst()
                 .orElseThrow();
     }
-
 
     public List<DrinkDeposit> getAll() {
         return Optional.of(repository.findAll()).orElseThrow();
@@ -43,14 +43,26 @@ public class DrinkDepositService {
     public List<Map<String, Double>> getAllVolumesPerDrink() {
         return repository.findAll()
                 .stream()
-                .map(drinkDeposit -> {
-                    Map<String, Double> data = new HashMap<>();
-                    data.put(drinkDeposit.getSection(), drinkDeposit.getDrink().getVolume());
-                    return data;
+                .collect(Collectors.toMap(
+                        DrinkDeposit::getSection,
+                        this::totalVolumeOnSection,
+                        (existing, replacement) -> existing))
+                .entrySet()
+                .stream()
+                .map(entry -> {
+                    Map<String, Double> sectionAndVolume = new HashMap<>();
+                    sectionAndVolume.put(entry.getKey(), entry.getValue());
+                    return sectionAndVolume;
                 })
                 .toList();
     }
 
+    private Double totalVolumeOnSection(DrinkDeposit drinkDeposit) {
+        return repository.findBySectionOrderByIdDesc(drinkDeposit.getSection())
+                .stream()
+                .mapToDouble(drinkDeposit1 -> drinkDeposit1.getDrink().getVolume())
+                .sum();
+    }
 
     private boolean sectionExists(DrinkDeposit drinkDeposit) {
         return Stream.of(drinkDeposit)
@@ -72,13 +84,6 @@ public class DrinkDepositService {
     }
 
 
-    private Double totalVolumeOnSection(DrinkDeposit drinkDeposit) {
-        return Stream.of(drinkDeposit)
-                .filter(drinkDeposit1 -> drinkDeposit1.getSection().equalsIgnoreCase(drinkDeposit.getSection()))
-                .mapToDouble(drinkDeposit1 -> drinkDeposit1.getDrink().getVolume())
-                .sum();
-    }
-
     private void sectionCapacity(DrinkDeposit drinkDeposit) {
         if (sectionExists(drinkDeposit) && !drinkTypeEquals(drinkDeposit)) {
             throw new IlegalRequest("Não é permitido adicionar bebidas alcoólicas e não alcoólicas na mesma seção!");
@@ -93,10 +98,14 @@ public class DrinkDepositService {
 
     private void entryAndExitOfstock(DrinkDeposit drinkDeposit) {
         double totalVolume = totalVolumeOnSection(drinkDeposit);
+        double volume = drinkDeposit.getDrink().getVolume();
         double actualVolume = drinkDeposit.getMovimentType().equals(MovimentType.ENTRY)
-                ? totalVolume + drinkDeposit.getDrink().getVolume()
-                : totalVolume - drinkDeposit.getDrink().getVolume();
+                ? totalVolume + volume
+                : totalVolume - volume;
 
+        if (actualVolume < volume && drinkDeposit.getMovimentType().equals(MovimentType.EXIT)) {
+            throw new IlegalRequest("não é possivel realizar uma saida sem possuir volume no estoque !");
+        }
         drinkDeposit.getDrink().totalVolumeInSection(actualVolume);
     }
 

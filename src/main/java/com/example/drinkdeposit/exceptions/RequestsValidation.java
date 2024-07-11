@@ -27,7 +27,7 @@ public class RequestsValidation {
     }
 
     @ExceptionHandler(EntryError.class)
-    public ResponseEntity<Object> status500(IlegalRequest exception) {
+    public ResponseEntity<Object> status500(EntryError exception) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new PersonalizedResponse(HttpStatus.BAD_REQUEST.value(), exception.getMessage()));
     }
 

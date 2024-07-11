@@ -1,5 +1,6 @@
 package com.example.drinkdeposit.controller;
 
+import com.example.drinkdeposit.exceptions.EntryError;
 import com.example.drinkdeposit.exceptions.IlegalRequest;
 import com.example.drinkdeposit.exceptions.RequestsValidation;
 import com.example.drinkdeposit.service.DrinkDepositService;
@@ -58,11 +59,11 @@ class DrinkDepositControllerTest {
 
     @Test
     void doTestErrorOnNewCreate() throws Exception {
-        when(drinkDepositService.save(any())).thenReturn(any());
+        doThrow(IlegalRequest.class).when(drinkDepositService).save(drinkDepositDtoMock());
 
         mockMvc.perform(post("/drinkdeposit/save")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(objectMapper.writeValueAsString(any())))
+                        .content(objectMapper.writeValueAsString(drinkDepositDtoMock())))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andReturn();
