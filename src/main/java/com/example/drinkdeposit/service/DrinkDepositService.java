@@ -6,9 +6,10 @@ import com.example.drinkdeposit.exceptions.IlegalRequest;
 import com.example.drinkdeposit.model.dto.DrinkDepositDTO;
 import com.example.drinkdeposit.model.entities.DrinkDeposit;
 import com.example.drinkdeposit.model.entities.Drink;
-import com.example.drinkdeposit.model.enums.DrinkType;
+import com.example.drinkdeposit.model.entities.DrinkDepositHistory;
 import com.example.drinkdeposit.model.enums.MovimentType;
 import com.example.drinkdeposit.repositories.DrinkDepositRepository;
+import com.example.drinkdeposit.repositories.HistoryDrinkDepositRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -19,9 +20,11 @@ import java.util.stream.Stream;
 public class DrinkDepositService {
 
     private final DrinkDepositRepository repository;
+    private final HistoryDrinkDepositRepository historyDrinkDepositRepository;
 
-    public DrinkDepositService(DrinkDepositRepository repository) {
+    public DrinkDepositService(DrinkDepositRepository repository, HistoryDrinkDepositRepository historyDrinkDepositRepository) {
         this.repository = repository;
+        this.historyDrinkDepositRepository = historyDrinkDepositRepository;
     }
 
     public DrinkDeposit save(DrinkDepositDTO drinkDepositDTO) {
@@ -31,6 +34,7 @@ public class DrinkDepositService {
                     entryAndExitOfstock(drinkDeposit);
                     sectionCapacity(drinkDeposit);
                     excessVolume(drinkDeposit);
+                   // createHistory(drinkDeposit);
                     return repository.save(drinkDeposit);
                 })
                 .findFirst()
@@ -57,6 +61,7 @@ public class DrinkDepositService {
                 })
                 .toList();
     }
+
 
     private Double totalVolumeOnSection(DrinkDeposit drinkDeposit) {
         return repository.findBySectionOrderByIdDesc(drinkDeposit.getSection())
@@ -85,7 +90,6 @@ public class DrinkDepositService {
                 .orElse(true);
     }
 
-
     private void sectionCapacity(DrinkDeposit drinkDeposit) {
         if (sectionExists(drinkDeposit) && !drinkTypeEquals(drinkDeposit)) {
             throw new IlegalRequest("Não é permitido adicionar bebidas alcoólicas e não alcoólicas na mesma seção!");
@@ -105,15 +109,22 @@ public class DrinkDepositService {
                 ? totalVolume + volume
                 : totalVolume - volume;
 
-        if (actualVolume < volume && drinkDeposit.getMovimentType().equals(MovimentType.EXIT)) {
+        if (totalVolume <= 0 && drinkDeposit.getMovimentType().equals(MovimentType.EXIT)) {
             throw new IlegalRequest("não é possivel realizar uma saida sem possuir volume no estoque !");
         }
         drinkDeposit.getDrink().totalVolumeInSection(actualVolume);
     }
 
-    public DrinkDeposit convertDtoInModel(DrinkDepositDTO DTO) {
+    private DrinkDeposit convertDtoInModel(DrinkDepositDTO DTO) {
         return new DrinkDeposit(DTO.data(), DTO.responsible(), DTO.section(), DTO.movimentType(),
                 new Drink(DTO.drink().drinkType(), DTO.drink().drinkName(), DTO.drink().volume()));
     }
+
+    private void createHistory(DrinkDeposit drinkDeposit) {
+        DrinkDepositHistory history = new DrinkDepositHistory(drinkDeposit.getData(), drinkDeposit.getResponsible(), drinkDeposit.getSection(), drinkDeposit.getMovimentType(),
+                new Drink(drinkDeposit.getDrink().getDrinkType(), drinkDeposit.getDrink().getDrinkName(), drinkDeposit.getDrink().getVolume()));
+        historyDrinkDepositRepository.save(history);
+    }
+
 
 }

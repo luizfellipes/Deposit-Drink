@@ -10,13 +10,15 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "TB_DRINK_DEPOSIT")
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "DEPOSIT_TYPE")
 public class DrinkDeposit implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private LocalDateTime data;
     private String responsible;

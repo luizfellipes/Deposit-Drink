@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -18,10 +17,10 @@ public class DrinkConfig implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Integer id = 1;
+    private Integer id;
     private Double MAX_ALCOHOLIC_CAPACITY = 500.0;
     private Double MAX_NONALCOHOLIC_CAPACITY = 400.0;
-    private Set<String> PERMIT_SECTION = new HashSet<>(Arrays.asList("A", "B", "C", "D", "E"));
+    private static Set<String> PERMIT_SECTION = Set.of("A", "B", "C", "D", "E");
 
     public DrinkConfig() {
     }
@@ -30,7 +29,7 @@ public class DrinkConfig implements Serializable {
         this.id = id;
         this.MAX_ALCOHOLIC_CAPACITY = MAX_ALCOHOLIC_CAPACITY;
         this.MAX_NONALCOHOLIC_CAPACITY = MAX_NONALCOHOLIC_CAPACITY;
-        this.PERMIT_SECTION = PERMIT_SECTION;
+        DrinkConfig.PERMIT_SECTION = PERMIT_SECTION;
     }
 
 

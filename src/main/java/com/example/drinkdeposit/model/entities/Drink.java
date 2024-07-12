@@ -54,7 +54,7 @@ public class Drink implements Serializable {
         return drinkName;
     }
 
-    public double getTotalVolumeInSection() {
+    public Double getTotalVolumeInSection() {
         return totalVolumeInSection;
     }
 
@@ -78,12 +78,8 @@ public class Drink implements Serializable {
         }
     }
 
-    public Double totalVolumeInSection(Double volumeInSection) {
-        if (volumeInSection < 0) {
-            throw new IlegalRequest("não é possivel inserir volumes abaixo de 0 !");
-        } else {
-         return this.totalVolumeInSection = volumeInSection;
-        }
+    public void totalVolumeInSection(Double volumeInSection) {
+        this.totalVolumeInSection = volumeInSection;
     }
 
     private void iniciateConfig() {
