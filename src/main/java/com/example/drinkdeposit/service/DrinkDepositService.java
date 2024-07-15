@@ -21,12 +21,12 @@ import java.util.stream.Stream;
 public class DrinkDepositService {
 
     private final DrinkDepositRepository repository;
-    private final HistoryDrinkDepositRepository historyRepository;
+    private final HistoryService historyService;
 
 
-    public DrinkDepositService(DrinkDepositRepository repository, HistoryDrinkDepositRepository historyRepository) {
+    public DrinkDepositService(DrinkDepositRepository repository, HistoryService historyService) {
         this.repository = repository;
-        this.historyRepository = historyRepository;
+        this.historyService = historyService;
     }
 
     public DrinkDeposit save(DrinkDepositDTO drinkDepositDTO) {
@@ -36,17 +36,11 @@ public class DrinkDepositService {
                     entryAndExitOfstock(drinkDeposit);
                     sectionCapacity(drinkDeposit);
                     excessVolume(drinkDeposit);
-                    saveHistory(drinkDeposit);
+                    historyService.saveHistory(drinkDeposit);
                     return repository.save(drinkDeposit);
                 })
                 .findFirst()
                 .orElseThrow();
-    }
-
-    private void saveHistory(DrinkDeposit drinkDeposit) {
-        DrinkDepositHistory history = new DrinkDepositHistory(drinkDeposit.getData(), drinkDeposit.getResponsible(),
-                drinkDeposit.getSection(), drinkDeposit.getMovimentType(), drinkDeposit.getDrink());
-        historyRepository.save(history);
     }
 
     public List<DrinkDeposit> getAll() {
