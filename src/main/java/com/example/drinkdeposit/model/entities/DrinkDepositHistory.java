@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "TB_DRINK_HISTORY")
-public class DrinkDepositHistory extends DrinkDeposit implements Serializable {
+public class DrinkDepositHistory implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -32,8 +32,16 @@ public class DrinkDepositHistory extends DrinkDeposit implements Serializable {
     public DrinkDepositHistory() {
     }
 
-    public DrinkDepositHistory(Integer id, Drink drink) {
-        super(id, drink);
+    public DrinkDepositHistory(Integer id, LocalDateTime data, String responsible, String section, MovimentType movimentType, DrinkType drinkType, Double volume, String drinkName, Double totalVolumeInSection) {
+        this.id = id;
+        this.data = data;
+        this.responsible = responsible;
+        this.section = section;
+        this.movimentType = movimentType;
+        this.drinkType = drinkType;
+        this.volume = volume;
+        this.drinkName = drinkName;
+        this.totalVolumeInSection = totalVolumeInSection;
     }
 
     public DrinkDepositHistory(LocalDateTime data, String responsible, String section, MovimentType movimentType, Drink drink) {
@@ -45,6 +53,42 @@ public class DrinkDepositHistory extends DrinkDeposit implements Serializable {
         this.volume = drink.getVolume();
         this.drinkName = drink.getDrinkName();
         this.totalVolumeInSection = drink.getTotalVolumeInSection();
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public LocalDateTime getData() {
+        return data;
+    }
+
+    public String getResponsible() {
+        return responsible;
+    }
+
+    public String getSection() {
+        return section;
+    }
+
+    public MovimentType getMovimentType() {
+        return movimentType;
+    }
+
+    public DrinkType getDrinkType() {
+        return drinkType;
+    }
+
+    public Double getVolume() {
+        return volume;
+    }
+
+    public String getDrinkName() {
+        return drinkName;
+    }
+
+    public Double getTotalVolumeInSection() {
+        return totalVolumeInSection;
     }
 }
 

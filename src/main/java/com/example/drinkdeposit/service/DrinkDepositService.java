@@ -9,6 +9,7 @@ import com.example.drinkdeposit.model.entities.Drink;
 import com.example.drinkdeposit.model.entities.DrinkDepositHistory;
 import com.example.drinkdeposit.model.enums.MovimentType;
 import com.example.drinkdeposit.repositories.DrinkDepositRepository;
+
 import com.example.drinkdeposit.repositories.HistoryDrinkDepositRepository;
 import org.springframework.stereotype.Service;
 
@@ -20,11 +21,12 @@ import java.util.stream.Stream;
 public class DrinkDepositService {
 
     private final DrinkDepositRepository repository;
-    private final HistoryDrinkDepositRepository historyDrinkDepositRepository;
+    private final HistoryDrinkDepositRepository historyRepository;
 
-    public DrinkDepositService(DrinkDepositRepository repository, HistoryDrinkDepositRepository historyDrinkDepositRepository) {
+
+    public DrinkDepositService(DrinkDepositRepository repository, HistoryDrinkDepositRepository historyRepository) {
         this.repository = repository;
-        this.historyDrinkDepositRepository = historyDrinkDepositRepository;
+        this.historyRepository = historyRepository;
     }
 
     public DrinkDeposit save(DrinkDepositDTO drinkDepositDTO) {
@@ -34,11 +36,17 @@ public class DrinkDepositService {
                     entryAndExitOfstock(drinkDeposit);
                     sectionCapacity(drinkDeposit);
                     excessVolume(drinkDeposit);
-                   // createHistory(drinkDeposit);
+                    saveHistory(drinkDeposit);
                     return repository.save(drinkDeposit);
                 })
                 .findFirst()
                 .orElseThrow();
+    }
+
+    private void saveHistory(DrinkDeposit drinkDeposit) {
+        DrinkDepositHistory history = new DrinkDepositHistory(drinkDeposit.getData(), drinkDeposit.getResponsible(),
+                drinkDeposit.getSection(), drinkDeposit.getMovimentType(), drinkDeposit.getDrink());
+        historyRepository.save(history);
     }
 
     public List<DrinkDeposit> getAll() {
@@ -119,12 +127,5 @@ public class DrinkDepositService {
         return new DrinkDeposit(DTO.data(), DTO.responsible(), DTO.section(), DTO.movimentType(),
                 new Drink(DTO.drink().drinkType(), DTO.drink().drinkName(), DTO.drink().volume()));
     }
-
-    private void createHistory(DrinkDeposit drinkDeposit) {
-        DrinkDepositHistory history = new DrinkDepositHistory(drinkDeposit.getData(), drinkDeposit.getResponsible(), drinkDeposit.getSection(), drinkDeposit.getMovimentType(),
-                new Drink(drinkDeposit.getDrink().getDrinkType(), drinkDeposit.getDrink().getDrinkName(), drinkDeposit.getDrink().getVolume()));
-        historyDrinkDepositRepository.save(history);
-    }
-
 
 }

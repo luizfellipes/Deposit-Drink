@@ -1,6 +1,5 @@
 package com.example.drinkdeposit.model.entities;
 
-import com.example.drinkdeposit.exceptions.IlegalRequest;
 import com.example.drinkdeposit.model.enums.MovimentType;
 import jakarta.persistence.*;
 
@@ -10,8 +9,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "TB_DRINK_DEPOSIT")
-@Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "DEPOSIT_TYPE")
 public class DrinkDeposit implements Serializable {
 
     @Serial
@@ -26,7 +23,6 @@ public class DrinkDeposit implements Serializable {
     private MovimentType movimentType;
     @OneToOne(cascade = CascadeType.ALL)
     private Drink drink;
-
 
     public DrinkDeposit() {
     }
