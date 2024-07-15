@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -18,20 +16,22 @@ public class DrinkConfig implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Integer id;
-    private Double MAX_ALCOHOLIC_CAPACITY = 500.0;
-    private Double MAX_NONALCOHOLIC_CAPACITY = 400.0;
-    private static Set<String> PERMIT_SECTION = Set.of("A", "B", "C", "D", "E");
+    private final Double MAX_ALCOHOLIC_CAPACITY;
+    private final Double MAX_NONALCOHOLIC_CAPACITY;
+    private final String PERMIT_SECTION;
 
     public DrinkConfig() {
+        this.MAX_ALCOHOLIC_CAPACITY = 500.0;
+        this.MAX_NONALCOHOLIC_CAPACITY = 400.0;
+        this.PERMIT_SECTION = Set.of("A", "B", "C", "D", "E").toString();
     }
 
-    public DrinkConfig(Integer id, Double MAX_ALCOHOLIC_CAPACITY, Double MAX_NONALCOHOLIC_CAPACITY, Set<String> PERMIT_SECTION) {
+    public DrinkConfig(Integer id, Double maxAlcoholicCapacity, Double maxNonAlcoholicCapacity, String permitSection) {
         this.id = id;
-        this.MAX_ALCOHOLIC_CAPACITY = MAX_ALCOHOLIC_CAPACITY;
-        this.MAX_NONALCOHOLIC_CAPACITY = MAX_NONALCOHOLIC_CAPACITY;
-        DrinkConfig.PERMIT_SECTION = PERMIT_SECTION;
+        this.MAX_ALCOHOLIC_CAPACITY = maxAlcoholicCapacity;
+        this.MAX_NONALCOHOLIC_CAPACITY = maxNonAlcoholicCapacity;
+        this.PERMIT_SECTION = permitSection;
     }
-
 
     public Integer getId() {
         return id;
@@ -49,7 +49,7 @@ public class DrinkConfig implements Serializable {
         return MAX_NONALCOHOLIC_CAPACITY;
     }
 
-    public Set<String> getPERMIT_SECTION() {
+    public String getPERMIT_SECTION() {
         return PERMIT_SECTION;
     }
 }
