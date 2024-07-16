@@ -1,6 +1,6 @@
 package com.example.drinkdeposit.controller;
 
-import com.example.drinkdeposit.model.entities.DrinkDepositHistory;
+import com.example.drinkdeposit.model.entities.DrinkHistory;
 import com.example.drinkdeposit.service.HistoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +23,7 @@ public class DrinkHistoryController {
     }
 
     @GetMapping("/history")
-    public ResponseEntity<List<DrinkDepositHistory>> getAll(){
+    public ResponseEntity<List<DrinkHistory>> getAll(){
         return ResponseEntity.status(HttpStatus.OK).body(historyService.getAll());
     }
 

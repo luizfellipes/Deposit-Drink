@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "TB_DRINK_HISTORY")
-public class DrinkDepositHistory implements Serializable {
+public class DrinkHistory implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -29,10 +29,10 @@ public class DrinkDepositHistory implements Serializable {
     private String drinkName;
     private Double totalVolumeInSection;
 
-    public DrinkDepositHistory() {
+    public DrinkHistory() {
     }
 
-    public DrinkDepositHistory(Integer id, LocalDateTime data, String responsible, String section, MovimentType movimentType, DrinkType drinkType, Double volume, String drinkName, Double totalVolumeInSection) {
+    public DrinkHistory(Integer id, LocalDateTime data, String responsible, String section, MovimentType movimentType, DrinkType drinkType, Double volume, String drinkName, Double totalVolumeInSection) {
         this.id = id;
         this.data = data;
         this.responsible = responsible;
@@ -44,7 +44,7 @@ public class DrinkDepositHistory implements Serializable {
         this.totalVolumeInSection = totalVolumeInSection;
     }
 
-    public DrinkDepositHistory(LocalDateTime data, String responsible, String section, MovimentType movimentType, Drink drink) {
+    public DrinkHistory(LocalDateTime data, String responsible, String section, MovimentType movimentType, Drink drink) {
         this.data = data;
         this.responsible = responsible;
         this.section = section;
