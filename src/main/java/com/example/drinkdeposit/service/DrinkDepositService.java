@@ -6,11 +6,9 @@ import com.example.drinkdeposit.exceptions.IlegalRequest;
 import com.example.drinkdeposit.model.dto.DrinkDepositDTO;
 import com.example.drinkdeposit.model.entities.DrinkDeposit;
 import com.example.drinkdeposit.model.entities.Drink;
-import com.example.drinkdeposit.model.entities.DrinkDepositHistory;
 import com.example.drinkdeposit.model.enums.MovimentType;
 import com.example.drinkdeposit.repositories.DrinkDepositRepository;
 
-import com.example.drinkdeposit.repositories.HistoryDrinkDepositRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -64,7 +62,6 @@ public class DrinkDepositService {
                 .toList();
     }
 
-
     private Double totalVolumeOnSection(DrinkDeposit drinkDeposit) {
         return repository.findBySectionOrderByIdDesc(drinkDeposit.getSection())
                 .stream()
@@ -80,7 +77,7 @@ public class DrinkDepositService {
 
     private void verifySectionPermit(DrinkDeposit drinkDeposit) {
         if (!drinkDeposit.getDrink().getDrinkConfig().getPERMIT_SECTION().contains(drinkDeposit.getSection().toUpperCase())) {
-            throw new EntryError("Seção não permitida! Use apenas seções de A a E.");
+            throw new EntryError("Seção não permitida! Use apenas seções de: " + drinkDeposit.getDrink().getDrinkConfig().getPERMIT_SECTION());
         }
     }
 
@@ -100,7 +97,7 @@ public class DrinkDepositService {
 
     private void excessVolume(DrinkDeposit drinkDeposit) {
         if (drinkDeposit.getMovimentType().equals(MovimentType.ENTRY) && totalVolumeOnSection(drinkDeposit) + drinkDeposit.getDrink().getVolume() > drinkDeposit.getDrink().maxCapacity()) {
-            throw new EntryError("Não foi possível adicionar na seção pois o volume total foi excedente!");
+            throw new EntryError("Não foi possível adicionar na seção pois o volume total foi excedente! " + "Volume maximo na seção: " + drinkDeposit.getDrink().maxCapacity());
         }
     }
 

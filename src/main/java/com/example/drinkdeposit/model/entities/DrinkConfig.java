@@ -16,17 +16,17 @@ public class DrinkConfig implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Integer id;
-    private final Double MAX_ALCOHOLIC_CAPACITY;
-    private final Double MAX_NONALCOHOLIC_CAPACITY;
-    private final String PERMIT_SECTION;
+    private Double MAX_ALCOHOLIC_CAPACITY;
+    private Double MAX_NONALCOHOLIC_CAPACITY;
+    private Set<String> PERMIT_SECTION;
 
     public DrinkConfig() {
         this.MAX_ALCOHOLIC_CAPACITY = 500.0;
         this.MAX_NONALCOHOLIC_CAPACITY = 400.0;
-        this.PERMIT_SECTION = Set.of("A", "B", "C", "D", "E").toString();
+        this.PERMIT_SECTION = Set.of("A", "B", "C", "D", "E");
     }
 
-    public DrinkConfig(Integer id, Double maxAlcoholicCapacity, Double maxNonAlcoholicCapacity, String permitSection) {
+    public DrinkConfig(Integer id, Double maxAlcoholicCapacity, Double maxNonAlcoholicCapacity, Set<String> permitSection) {
         this.id = id;
         this.MAX_ALCOHOLIC_CAPACITY = maxAlcoholicCapacity;
         this.MAX_NONALCOHOLIC_CAPACITY = maxNonAlcoholicCapacity;
@@ -37,10 +37,6 @@ public class DrinkConfig implements Serializable {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public Double getMAX_ALCOHOLIC_CAPACITY() {
         return MAX_ALCOHOLIC_CAPACITY;
     }
@@ -49,7 +45,7 @@ public class DrinkConfig implements Serializable {
         return MAX_NONALCOHOLIC_CAPACITY;
     }
 
-    public String getPERMIT_SECTION() {
+    public Set<String> getPERMIT_SECTION() {
         return PERMIT_SECTION;
     }
 }
