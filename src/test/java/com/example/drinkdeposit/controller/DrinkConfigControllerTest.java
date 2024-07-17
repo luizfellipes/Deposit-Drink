@@ -15,7 +15,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static com.example.drinkdeposit.MocksDTO.DrinkConfigDTOMock.drinkConfigDTO;
+import static com.example.drinkdeposit.MocksDTO.DrinkConfigDTOMock.drinkConfigDTOMock;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -47,7 +47,7 @@ class DrinkConfigControllerTest {
 
         mockMvc.perform(patch("/drinkdeposit/sections")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(drinkConfigDTO())))
+                        .content(objectMapper.writeValueAsString(drinkConfigDTOMock())))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -55,11 +55,11 @@ class DrinkConfigControllerTest {
 
     @Test
     void doErrorOnMakePatchingSections() throws Exception {
-       doThrow(EntryError.class).when(drinkConfigService).patchingDrinkConfig(drinkConfigDTO());
+       doThrow(EntryError.class).when(drinkConfigService).patchingDrinkConfig(drinkConfigDTOMock());
 
         mockMvc.perform(patch("/drinkdeposit/sections")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(drinkConfigDTO())))
+                        .content(objectMapper.writeValueAsString(drinkConfigDTOMock())))
                 .andDo(print())
                 .andExpect(status().isInternalServerError())
                 .andReturn();

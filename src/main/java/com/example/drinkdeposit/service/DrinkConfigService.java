@@ -24,7 +24,7 @@ public class DrinkConfigService {
                 .orElseThrow();
     }
 
-    public DrinkConfig convertDrinkConfig(DrinkConfigDTO drinkConfigDTO) {
+    private DrinkConfig convertDrinkConfig(DrinkConfigDTO drinkConfigDTO) {
         return new DrinkConfig(drinkConfigDTO.id(), drinkConfigDTO.MAX_ALCOHOLIC_CAPACITY(), drinkConfigDTO.MAX_NONALCOHOLIC_CAPACITY(), drinkConfigDTO.PERMIT_SECTION());
     }
 }
