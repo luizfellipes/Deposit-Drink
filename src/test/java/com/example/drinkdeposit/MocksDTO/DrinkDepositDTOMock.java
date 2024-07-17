@@ -9,8 +9,18 @@ import java.time.LocalDateTime;
 
 public abstract class DrinkDepositDTOMock {
 
-    public static DrinkDepositDTO drinkDepositDtoMock() {
+    public static DrinkDepositDTO drinkDepositDtoMockExit() {
         return new DrinkDepositDTO(LocalDateTime.parse("2021-01-01T18:30:00"), MovimentType.EXIT, "employee", "a",
+                new DrinkDTO(DrinkType.ALCOHOLIC, "Beer", 350.0));
+    }
+
+    public static DrinkDepositDTO drinkDepositDtoMockEntry() {
+        return new DrinkDepositDTO(LocalDateTime.parse("2021-01-01T18:30:00"), MovimentType.ENTRY, "employee", "a",
+                new DrinkDTO(DrinkType.ALCOHOLIC, "Beer", 350.0));
+    }
+
+    public static DrinkDepositDTO drinkDepositDtoMockSectionOut() {
+        return new DrinkDepositDTO(LocalDateTime.parse("2021-01-01T18:30:00"), MovimentType.EXIT, "employee", "F",
                 new DrinkDTO(DrinkType.ALCOHOLIC, "Beer", 350.0));
     }
 

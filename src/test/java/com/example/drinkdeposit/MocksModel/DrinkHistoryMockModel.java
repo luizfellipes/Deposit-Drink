@@ -1,6 +1,5 @@
 package com.example.drinkdeposit.MocksModel;
 
-import com.example.drinkdeposit.model.dto.DrinkDTO;
 import com.example.drinkdeposit.model.entities.Drink;
 import com.example.drinkdeposit.model.entities.DrinkHistory;
 import com.example.drinkdeposit.model.enums.DrinkType;

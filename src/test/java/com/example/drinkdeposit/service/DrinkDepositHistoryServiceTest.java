@@ -19,7 +19,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
-class DrinkDepositHistoryTest {
+class DrinkDepositHistoryServiceTest {
 
     private DrinkHistoryService drinkHistoryService;
     private DrinkDepositHistoryRepository drinkDepositHistoryRepository;
@@ -30,6 +30,7 @@ class DrinkDepositHistoryTest {
         this.drinkDepositHistoryRepository = mock(DrinkDepositHistoryRepository.class);
         this.drinkHistoryService = new DrinkHistoryService(drinkDepositHistoryRepository);
     }
+
 
     @Test
     void makeASaveWithSucessfully() {

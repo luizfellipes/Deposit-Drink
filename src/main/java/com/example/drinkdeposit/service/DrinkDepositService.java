@@ -10,7 +10,6 @@ import com.example.drinkdeposit.model.entities.Drink;
 import com.example.drinkdeposit.model.enums.MovimentType;
 import com.example.drinkdeposit.repositories.DrinkDepositRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -22,13 +21,13 @@ public class DrinkDepositService {
 
     private final DrinkDepositRepository repository;
     private final DrinkHistoryService drinkHistoryService;
-    @Autowired
-    private DrinkConfig drinkConfig;
+    private final DrinkConfig drinkConfig;
+
 
     public DrinkDepositService(DrinkDepositRepository repository, DrinkHistoryService drinkHistoryService, DrinkConfig drinkConfig) {
         this.repository = repository;
         this.drinkHistoryService = drinkHistoryService;
-
+        this.drinkConfig = drinkConfig;
     }
 
     public DrinkDeposit save(DrinkDepositDTO drinkDepositDTO) {
