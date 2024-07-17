@@ -1,6 +1,5 @@
 package com.example.drinkdeposit.controller;
 
-import com.example.drinkdeposit.exceptions.EntryError;
 import com.example.drinkdeposit.exceptions.IlegalRequest;
 import com.example.drinkdeposit.exceptions.RequestsValidation;
 import com.example.drinkdeposit.service.DrinkDepositService;

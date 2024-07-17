@@ -11,11 +11,11 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
-public class HistoryService {
+public class DrinkHistoryService {
 
     private final HistoryDrinkDepositRepository historyRepository;
 
-    public HistoryService(HistoryDrinkDepositRepository historyRepository) {
+    public DrinkHistoryService(HistoryDrinkDepositRepository historyRepository) {
         this.historyRepository = historyRepository;
     }
 

@@ -4,11 +4,13 @@ package com.example.drinkdeposit.service;
 import com.example.drinkdeposit.exceptions.EntryError;
 import com.example.drinkdeposit.exceptions.IlegalRequest;
 import com.example.drinkdeposit.model.dto.DrinkDepositDTO;
+import com.example.drinkdeposit.model.entities.DrinkConfig;
 import com.example.drinkdeposit.model.entities.DrinkDeposit;
 import com.example.drinkdeposit.model.entities.Drink;
 import com.example.drinkdeposit.model.enums.MovimentType;
 import com.example.drinkdeposit.repositories.DrinkDepositRepository;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -19,12 +21,14 @@ import java.util.stream.Stream;
 public class DrinkDepositService {
 
     private final DrinkDepositRepository repository;
-    private final HistoryService historyService;
+    private final DrinkHistoryService drinkHistoryService;
+    @Autowired
+    private DrinkConfig drinkConfig;
 
-
-    public DrinkDepositService(DrinkDepositRepository repository, HistoryService historyService) {
+    public DrinkDepositService(DrinkDepositRepository repository, DrinkHistoryService drinkHistoryService, DrinkConfig drinkConfig) {
         this.repository = repository;
-        this.historyService = historyService;
+        this.drinkHistoryService = drinkHistoryService;
+
     }
 
     public DrinkDeposit save(DrinkDepositDTO drinkDepositDTO) {
@@ -34,7 +38,7 @@ public class DrinkDepositService {
                     entryAndExitOfstock(drinkDeposit);
                     sectionCapacity(drinkDeposit);
                     excessVolume(drinkDeposit);
-                    historyService.saveHistory(drinkDeposit);
+                    drinkHistoryService.saveHistory(drinkDeposit);
                     return repository.save(drinkDeposit);
                 })
                 .findFirst()
@@ -76,8 +80,8 @@ public class DrinkDepositService {
     }
 
     private void verifySectionPermit(DrinkDeposit drinkDeposit) {
-        if (!drinkDeposit.getDrink().getDrinkConfig().getPERMIT_SECTION().contains(drinkDeposit.getSection().toUpperCase())) {
-            throw new EntryError("Seção não permitida! Use apenas seções de: " + drinkDeposit.getDrink().getDrinkConfig().getPERMIT_SECTION());
+        if (!drinkConfig.getPERMIT_SECTION().contains(drinkDeposit.getSection().toUpperCase())) {
+            throw new EntryError("Seção não permitida! Use apenas seções de: " + drinkConfig.getPERMIT_SECTION());
         }
     }
 
@@ -96,8 +100,8 @@ public class DrinkDepositService {
     }
 
     private void excessVolume(DrinkDeposit drinkDeposit) {
-        if (drinkDeposit.getMovimentType().equals(MovimentType.ENTRY) && totalVolumeOnSection(drinkDeposit) + drinkDeposit.getDrink().getVolume() > drinkDeposit.getDrink().maxCapacity()) {
-            throw new EntryError("Não foi possível adicionar na seção pois o volume total foi excedente! " + "Volume maximo na seção: " + drinkDeposit.getDrink().maxCapacity());
+        if (drinkDeposit.getMovimentType().equals(MovimentType.ENTRY) && totalVolumeOnSection(drinkDeposit) + drinkDeposit.getDrink().getVolume() > drinkConfig.maxCapacity(drinkDeposit.getDrink().getDrinkType())) {
+            throw new EntryError("Não foi possível adicionar na seção pois o volume total foi excedente! " + "Volume maximo na seção: " + drinkConfig.maxCapacity(drinkDeposit.getDrink().getDrinkType()));
         }
     }
 

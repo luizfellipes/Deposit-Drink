@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
 
+
 @Entity
 @Table(name = "TB_DRINK")
 public class Drink implements Serializable {
@@ -23,15 +24,11 @@ public class Drink implements Serializable {
     private Double volume;
     private String drinkName;
     private Double totalVolumeInSection;
-    @Column(name = "drink_config", columnDefinition = "BLOB")
-    private DrinkConfig drinkConfig;
-
 
     public Drink() {
     }
 
     public Drink(DrinkType drinkType, String drinkName, Double volume) {
-        iniciateConfig();
         this.drinkType = drinkType;
         this.drinkName = drinkName;
         checkNegativeValues(volume);
@@ -58,32 +55,16 @@ public class Drink implements Serializable {
         return totalVolumeInSection;
     }
 
-    public DrinkConfig getDrinkConfig() {
-        return drinkConfig;
-    }
-
     private void checkNegativeValues(Double volume) {
         if (volume <= 0) {
-            throw new IlegalRequest("Não é permitido volumes a baixo de 0");
+            throw new IlegalRequest("Não é permitido volumes a baixo de 1");
         } else {
             this.volume = volume;
         }
     }
 
-    public Double maxCapacity() {
-        if (drinkType.equals(DrinkType.ALCOHOLIC)) {
-            return this.getDrinkConfig().getMAX_ALCOHOLIC_CAPACITY();
-        } else {
-            return this.getDrinkConfig().getMAX_NONALCOHOLIC_CAPACITY();
-        }
-    }
-
     public void totalVolumeInSection(Double volumeInSection) {
         this.totalVolumeInSection = volumeInSection;
-    }
-
-    private void iniciateConfig() {
-        this.drinkConfig = new DrinkConfig();
     }
 
 }

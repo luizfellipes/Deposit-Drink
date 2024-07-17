@@ -20,7 +20,7 @@ public class DrinkConfigController {
     }
 
     @PatchMapping("/sections")
-    public ResponseEntity<DrinkConfig> updateSections(@PathVariable(value = "id") Integer id, @RequestBody @Valid DrinkConfigDTO drinkConfigDTO) {
-        return ResponseEntity.status(HttpStatus.OK).body(drinkConfigService.patchingDrinkConfig(id, drinkConfigDTO));
+    public ResponseEntity<DrinkConfig> patchingSections(@RequestBody @Valid DrinkConfigDTO drinkConfigDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(drinkConfigService.patchingDrinkConfig(drinkConfigDTO));
     }
 }

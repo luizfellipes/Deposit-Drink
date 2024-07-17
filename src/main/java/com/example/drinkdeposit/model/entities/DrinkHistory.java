@@ -32,17 +32,6 @@ public class DrinkHistory implements Serializable {
     public DrinkHistory() {
     }
 
-    public DrinkHistory(Integer id, LocalDateTime data, String responsible, String section, MovimentType movimentType, DrinkType drinkType, Double volume, String drinkName, Double totalVolumeInSection) {
-        this.id = id;
-        this.data = data;
-        this.responsible = responsible;
-        this.section = section;
-        this.movimentType = movimentType;
-        this.drinkType = drinkType;
-        this.volume = volume;
-        this.drinkName = drinkName;
-        this.totalVolumeInSection = totalVolumeInSection;
-    }
 
     public DrinkHistory(LocalDateTime data, String responsible, String section, MovimentType movimentType, Drink drink) {
         this.data = data;

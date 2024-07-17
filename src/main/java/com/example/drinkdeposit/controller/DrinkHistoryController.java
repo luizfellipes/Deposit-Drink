@@ -1,7 +1,7 @@
 package com.example.drinkdeposit.controller;
 
 import com.example.drinkdeposit.model.entities.DrinkHistory;
-import com.example.drinkdeposit.service.HistoryService;
+import com.example.drinkdeposit.service.DrinkHistoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,15 +16,15 @@ import java.util.List;
 @RequestMapping("/drinkdeposit")
 public class DrinkHistoryController {
 
-    private final HistoryService historyService;
+    private final DrinkHistoryService drinkHistoryService;
 
-    public DrinkHistoryController(HistoryService historyService) {
-        this.historyService = historyService;
+    public DrinkHistoryController(DrinkHistoryService drinkHistoryService) {
+        this.drinkHistoryService = drinkHistoryService;
     }
 
     @GetMapping("/history")
     public ResponseEntity<List<DrinkHistory>> getAll(){
-        return ResponseEntity.status(HttpStatus.OK).body(historyService.getAll());
+        return ResponseEntity.status(HttpStatus.OK).body(drinkHistoryService.getAll());
     }
 
 
