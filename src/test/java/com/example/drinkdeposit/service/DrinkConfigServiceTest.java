@@ -12,7 +12,7 @@ import org.junit.jupiter.api.function.Executable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static com.example.drinkdeposit.MocksDTO.DrinkConfigDTOMock.drinkConfigDTOMock;
-import static com.example.drinkdeposit.MocksDTO.DrinkConfigModel.drinkConfigModel;
+import static com.example.drinkdeposit.MocksModel.DrinkConfigMockModel.drinkConfigModel;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

@@ -1,8 +1,8 @@
-package com.example.drinkdeposit.MocksDTO;
+package com.example.drinkdeposit.MocksModel;
 
 import com.example.drinkdeposit.model.entities.DrinkConfig;
 
-public abstract class DrinkConfigModel {
+public abstract class DrinkConfigMockModel {
 
     public static DrinkConfig drinkConfigModel(){
         return new DrinkConfig();
