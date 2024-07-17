@@ -53,22 +53,6 @@ public class DrinkConfig implements Serializable {
         return PERMIT_SECTION;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public void setMAX_ALCOHOLIC_CAPACITY(Double MAX_ALCOHOLIC_CAPACITY) {
-        this.MAX_ALCOHOLIC_CAPACITY = MAX_ALCOHOLIC_CAPACITY;
-    }
-
-    public void setMAX_NONALCOHOLIC_CAPACITY(Double MAX_NONALCOHOLIC_CAPACITY) {
-        this.MAX_NONALCOHOLIC_CAPACITY = MAX_NONALCOHOLIC_CAPACITY;
-    }
-
-    public void setPERMIT_SECTION(Set<String> PERMIT_SECTION) {
-        this.PERMIT_SECTION = PERMIT_SECTION;
-    }
-
     public Double maxCapacity(DrinkType drinkType) {
         if (DrinkType.ALCOHOLIC.equals(drinkType)) {
             return this.MAX_ALCOHOLIC_CAPACITY;
