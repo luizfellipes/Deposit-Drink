@@ -14,9 +14,19 @@ public abstract class DrinkDepositDTOMock {
                 new DrinkDTO(DrinkType.ALCOHOLIC, "Beer", 350.0));
     }
 
-    public static DrinkDepositDTO drinkDepositDtoMockEntry() {
+    public static DrinkDepositDTO drinkDepositDtoMockEntryExcessVolume() {
+        return new DrinkDepositDTO(LocalDateTime.parse("2021-01-01T18:30:00"), MovimentType.ENTRY, "employee", "a",
+                new DrinkDTO(DrinkType.ALCOHOLIC, "Beer", 3500.0));
+    }
+
+    public static DrinkDepositDTO drinkDepositDtoMockEntryAlcoholic() {
         return new DrinkDepositDTO(LocalDateTime.parse("2021-01-01T18:30:00"), MovimentType.ENTRY, "employee", "a",
                 new DrinkDTO(DrinkType.ALCOHOLIC, "Beer", 350.0));
+    }
+
+    public static DrinkDepositDTO drinkDepositDtoMockEntryNonAlcoholic() {
+        return new DrinkDepositDTO(LocalDateTime.parse("2021-01-01T18:30:00"), MovimentType.ENTRY, "employee", "a",
+                new DrinkDTO(DrinkType.NONALCOHOLIC, "Beer", 350.0));
     }
 
     public static DrinkDepositDTO drinkDepositDtoMockSectionOut() {

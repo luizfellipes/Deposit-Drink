@@ -35,7 +35,7 @@ public class DrinkDepositService {
                 .map(drinkDeposit -> {
                     verifySectionPermit(drinkDeposit);
                     entryAndExitOfstock(drinkDeposit);
-                    sectionCapacity(drinkDeposit);
+                    sectionDrinkIsEquals(drinkDeposit);
                     excessVolume(drinkDeposit);
                     drinkHistoryService.saveHistory(drinkDeposit);
                     return repository.save(drinkDeposit);
@@ -92,7 +92,7 @@ public class DrinkDepositService {
                 .orElse(true);
     }
 
-    private void sectionCapacity(DrinkDeposit drinkDeposit) {
+    private void sectionDrinkIsEquals(DrinkDeposit drinkDeposit) {
         if (sectionExists(drinkDeposit) && !drinkTypeEquals(drinkDeposit)) {
             throw new IlegalRequest("Não é permitido adicionar bebidas alcoólicas e não alcoólicas na mesma seção!");
         }

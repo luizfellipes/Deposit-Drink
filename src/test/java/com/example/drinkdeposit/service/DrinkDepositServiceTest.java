@@ -15,11 +15,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.*;
 
-import static com.example.drinkdeposit.MocksDTO.DrinkDepositDTOMock.drinkDepositDtoMockEntry;
-import static com.example.drinkdeposit.MocksDTO.DrinkDepositDTOMock.drinkDepositDtoMockExit;
+import static com.example.drinkdeposit.MocksDTO.DrinkDepositDTOMock.*;
 import static com.example.drinkdeposit.MocksModel.DrinkConfigMockModel.drinkConfigModel;
-import static com.example.drinkdeposit.MocksModel.DrinkDepositMockModel.drinkDepositMockModel;
-import static com.example.drinkdeposit.MocksModel.DrinkDepositMockModel.drinkDepositMockModelSectionOut;
+import static com.example.drinkdeposit.MocksModel.DrinkDepositMockModel.*;
 import static com.example.drinkdeposit.MocksModel.DrinkHistoryMockModel.drinkHistoryMockModel;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -29,24 +27,22 @@ class DrinkDepositServiceTest {
 
     private DrinkDepositService drinkDepositService;
     private DrinkDepositRepository drinkDepositRepository;
-    private DrinkHistoryService drinkHistoryService;
     private DrinkDepositHistoryRepository drinkDepositHistoryRepository;
 
     @BeforeEach
     void setUp() {
         this.drinkDepositRepository = mock(DrinkDepositRepository.class);
         this.drinkDepositHistoryRepository = mock(DrinkDepositHistoryRepository.class);
-        this.drinkHistoryService = new DrinkHistoryService(drinkDepositHistoryRepository);
+        DrinkHistoryService drinkHistoryService = new DrinkHistoryService(drinkDepositHistoryRepository);
         this.drinkDepositService = new DrinkDepositService(drinkDepositRepository, drinkHistoryService, drinkConfigModel());
     }
 
     @Test
     void makeASaveWithSucessfully() {
         DrinkDeposit deposit = drinkDepositMockModel();
-        DrinkDepositDTO DTO = drinkDepositDtoMockEntry();
+        DrinkDepositDTO DTO = drinkDepositDtoMockEntryAlcoholic();
         when(drinkDepositRepository.save(any())).thenReturn(deposit);
         when(drinkDepositHistoryRepository.save(any())).thenReturn(drinkHistoryMockModel());
-        when(drinkHistoryService.saveHistory(deposit)).thenReturn(drinkHistoryMockModel());
 
 
         DrinkDeposit saved = drinkDepositService.save(DTO);
@@ -104,15 +100,71 @@ class DrinkDepositServiceTest {
         Assertions.assertFalse(histories.isEmpty());
     }
 
+    @Test
+    void makeTestExitWithoutVolume() {
+        DrinkDeposit mockModel = drinkDepositMockModelSectionOutNonAcloholic();
+        when(drinkDepositRepository.save(mockModel)).thenThrow(new IlegalRequest());
+
+        Executable save = () -> drinkDepositService.save(drinkDepositDtoMockExit());
+
+        Assertions.assertThrows(IlegalRequest.class, save);
+    }
 
     @Test
     void makeTestOnTotalVolumeOnSection() {
-        DrinkDeposit mockModel = drinkDepositMockModelSectionOut();
-        when(drinkDepositRepository.save(mockModel)).thenThrow(new EntryError());
+        DrinkDepositDTO DTO = drinkDepositDtoMockSectionOut();
+        when(drinkDepositRepository.save(any())).thenThrow(EntryError.class);
+        when(drinkDepositHistoryRepository.save(any())).thenReturn(drinkHistoryMockModel());
 
-        Executable save = () -> drinkDepositRepository.save(mockModel);
+        Executable save = () -> drinkDepositService.save(DTO);
 
         Assertions.assertThrows(EntryError.class, save);
     }
+
+    @Test
+    void makeTestOnSectionExists() {
+        DrinkDepositDTO DTO = drinkDepositDtoMockSectionOut();
+        when(drinkDepositRepository.save(any())).thenThrow(new EntryError());
+
+        Executable save = () -> drinkDepositService.save(DTO);
+
+        Assertions.assertThrows(EntryError.class, save);
+    }
+
+    @Test
+    void makeTestOnSectionDrinkIsEquals() {
+        DrinkDepositDTO DTO = drinkDepositDtoMockEntryAlcoholic();
+        DrinkDepositDTO DTO1 = drinkDepositDtoMockEntryNonAlcoholic();
+        when(drinkDepositRepository.save(any())).thenThrow(new IlegalRequest());
+        when(drinkDepositHistoryRepository.save(any())).thenReturn(drinkHistoryMockModel());
+
+        Executable save = () -> drinkDepositService.save(DTO);
+        Executable save1 = () -> drinkDepositService.save(DTO1);
+
+
+        Assertions.assertNotEquals(save1, save);
+        Assertions.assertThrows(IlegalRequest.class, save1);
+    }
+
+    @Test
+    void makeTestOnExcessVolume() {
+        DrinkDeposit mockModel = drinkDepositMockModelSectionOutNonAcloholic();
+        when(drinkDepositRepository.save(mockModel)).thenThrow(new EntryError());
+
+        Executable save = () -> drinkDepositService.save(drinkDepositDtoMockEntryExcessVolume());
+
+        Assertions.assertThrows(EntryError.class, save);
+    }
+
+    @Test
+    void makeTestOnEntryAndExitOfstock() {
+        DrinkDeposit mockModel1 = drinkDepositMockModelSectionOutNonAcloholic();
+        when(drinkDepositRepository.save(mockModel1)).thenThrow(new IlegalRequest());
+
+        Executable save1 = () -> drinkDepositService.save(drinkDepositDtoMockExit());
+
+        Assertions.assertThrows(IlegalRequest.class, save1);
+    }
+
 
 }
