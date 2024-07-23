@@ -33,11 +33,11 @@ public class DrinkDepositService {
     public DrinkDeposit save(DrinkDepositDTO drinkDepositDTO) {
         return Stream.of(convertDtoInModel(drinkDepositDTO))
                 .map(drinkDeposit -> {
+                    drinkHistoryService.saveHistory(drinkDeposit);
                     verifySectionPermit(drinkDeposit);
                     entryAndExitOfstock(drinkDeposit);
                     sectionDrinkIsEquals(drinkDeposit);
                     excessVolume(drinkDeposit);
-                    drinkHistoryService.saveHistory(drinkDeposit);
                     return repository.save(drinkDeposit);
                 })
                 .findFirst()
@@ -52,16 +52,29 @@ public class DrinkDepositService {
         return repository.findAll()
                 .stream()
                 .collect(Collectors.toMap(
-                        DrinkDeposit::getSection,
+                        drinkDeposit -> "Section: " + drinkDeposit.getSection() + ", DrinkType: " + drinkDeposit.getDrink().getDrinkType() + ", Volume",
                         this::totalVolumeOnSection,
                         (existing, replacement) -> existing))
                 .entrySet()
                 .stream()
-                .map(entry -> {
-                    Map<String, Double> sectionAndVolume = new HashMap<>();
-                    sectionAndVolume.put(entry.getKey(), entry.getValue());
-                    return sectionAndVolume;
-                })
+                .map(entry -> Map.of(entry.getKey(), entry.getValue()))
+                .toList();
+    }
+
+    public List<Map<String, Double>> availableSections() {
+        Map<String, Double> sectionVolumeMap = repository.findAll()
+                .stream()
+                .collect(Collectors.toMap(
+                        drinkDeposit -> "Section: " + drinkDeposit.getSection(),
+                        this::totalVolumeOnSection,
+                        Double::sum
+                ));
+
+        drinkConfig.getPERMIT_SECTION().forEach(section -> sectionVolumeMap.putIfAbsent("Section: " + section, 0.0));
+
+        return sectionVolumeMap.entrySet()
+                .stream()
+                .map(entry -> Map.of(entry.getKey(), entry.getValue()))
                 .toList();
     }
 

@@ -37,4 +37,9 @@ public class DrinkDepositController {
         return ResponseEntity.status(HttpStatus.OK).body(depositService.getAllVolumesPerDrink());
     }
 
+    @GetMapping("/availableSections")
+    public ResponseEntity<List<Map<String, Double>>> getAvailableSections(){
+        return ResponseEntity.status(HttpStatus.OK).body(depositService.availableSections());
+    }
+
 }
