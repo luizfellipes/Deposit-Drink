@@ -24,18 +24,12 @@ public class DrinkConfig implements Serializable {
     private Set<String> PERMIT_SECTION;
 
     public DrinkConfig() {
-        this.id = 1;
-        this.MAX_ALCOHOLIC_CAPACITY = 500.0;
-        this.MAX_NONALCOHOLIC_CAPACITY = 400.0;
-        this.PERMIT_SECTION = Set.of("A", "B", "C", "D", "E");
+        initializeConfig(1, 500.0, 400.0, Set.of("A", "B", "C", "D", "E"));
     }
 
     public DrinkConfig(Integer id, Double maxAlcoholicCapacity, Double maxNonAlcoholicCapacity, Set<String> permitSection) {
-        this.id = id;
-        this.MAX_ALCOHOLIC_CAPACITY = maxAlcoholicCapacity;
-        this.MAX_NONALCOHOLIC_CAPACITY = maxNonAlcoholicCapacity;
-        this.PERMIT_SECTION = permitSection;
-    }
+        initializeConfig(id, maxAlcoholicCapacity, maxNonAlcoholicCapacity, permitSection);
+ }
 
     public Integer getId() {
         return id;
@@ -53,12 +47,18 @@ public class DrinkConfig implements Serializable {
         return PERMIT_SECTION;
     }
 
-    public Double maxCapacity(DrinkType drinkType) {
-        if (DrinkType.ALCOHOLIC.equals(drinkType)) {
-            return this.MAX_ALCOHOLIC_CAPACITY;
-        } else {
-            return this.MAX_NONALCOHOLIC_CAPACITY;
-        }
+    private void initializeConfig(Integer id, Double maxAlcoholicCapacity, Double maxNonAlcoholicCapacity, Set<String> permitSection) {
+        this.id = id;
+        this.MAX_ALCOHOLIC_CAPACITY = maxAlcoholicCapacity;
+        this.MAX_NONALCOHOLIC_CAPACITY = maxNonAlcoholicCapacity;
+        this.PERMIT_SECTION = permitSection;
     }
 
+    public void updateConfig(Integer id, Double maxAlcoholicCapacity, Double maxNonAlcoholicCapacity, Set<String> permitSection) {
+        initializeConfig(id, maxAlcoholicCapacity, maxNonAlcoholicCapacity, permitSection);
+    }
+
+    public Double maxCapacity(DrinkType drinkType) {
+        return DrinkType.ALCOHOLIC.equals(drinkType) ? this.MAX_ALCOHOLIC_CAPACITY : this.MAX_NONALCOHOLIC_CAPACITY;
+    }
 }
