@@ -10,5 +10,6 @@ public record DrinkConfigDTO(
         Integer id,
         Double MAX_ALCOHOLIC_CAPACITY,
         Double MAX_NONALCOHOLIC_CAPACITY,
-        Set<String> PERMIT_SECTION) {
+        Set<String> PERMIT_SECTION,
+        boolean DRINK_CAN_BE_TOGETHER){
 }

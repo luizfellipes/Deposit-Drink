@@ -27,7 +27,6 @@ public class DrinkHistory implements Serializable {
     private DrinkType drinkType;
     private Double volume;
     private String drinkName;
-    private Double totalVolumeInSection;
 
     public DrinkHistory() {
     }
@@ -41,7 +40,6 @@ public class DrinkHistory implements Serializable {
         this.drinkType = drink.getDrinkType();
         this.volume = drink.getVolume();
         this.drinkName = drink.getDrinkName();
-        this.totalVolumeInSection = drink.getTotalVolumeInSection();
     }
 
     public Integer getId() {
@@ -76,9 +74,6 @@ public class DrinkHistory implements Serializable {
         return drinkName;
     }
 
-    public Double getTotalVolumeInSection() {
-        return totalVolumeInSection;
-    }
 }
 
 

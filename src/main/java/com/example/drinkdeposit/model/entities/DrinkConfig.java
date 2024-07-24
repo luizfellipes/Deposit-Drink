@@ -21,15 +21,16 @@ public class DrinkConfig implements Serializable {
     private Integer id;
     private Double MAX_ALCOHOLIC_CAPACITY;
     private Double MAX_NONALCOHOLIC_CAPACITY;
+    private boolean DRINK_CAN_BE_TOGETHER;
     private Set<String> PERMIT_SECTION;
 
     public DrinkConfig() {
-        initializeConfig(1, 500.0, 400.0, Set.of("A", "B", "C", "D", "E"));
+        initializeConfig(1, 500.0, 400.0, Set.of("A", "B", "C", "D", "E"), false);
     }
 
-    public DrinkConfig(Integer id, Double maxAlcoholicCapacity, Double maxNonAlcoholicCapacity, Set<String> permitSection) {
-        initializeConfig(id, maxAlcoholicCapacity, maxNonAlcoholicCapacity, permitSection);
- }
+    public DrinkConfig(Integer id, Double maxAlcoholicCapacity, Double maxNonAlcoholicCapacity, Set<String> permitSection, boolean drinksCanBeTogether) {
+        initializeConfig(id, maxAlcoholicCapacity, maxNonAlcoholicCapacity, permitSection, drinksCanBeTogether);
+    }
 
     public Integer getId() {
         return id;
@@ -47,15 +48,20 @@ public class DrinkConfig implements Serializable {
         return PERMIT_SECTION;
     }
 
-    private void initializeConfig(Integer id, Double maxAlcoholicCapacity, Double maxNonAlcoholicCapacity, Set<String> permitSection) {
+    public boolean isDRINK_CAN_BE_TOGETHER() {
+        return DRINK_CAN_BE_TOGETHER;
+    }
+
+    private void initializeConfig(Integer id, Double maxAlcoholicCapacity, Double maxNonAlcoholicCapacity, Set<String> permitSection, boolean drinksCanBeTogether) {
         this.id = id;
         this.MAX_ALCOHOLIC_CAPACITY = maxAlcoholicCapacity;
         this.MAX_NONALCOHOLIC_CAPACITY = maxNonAlcoholicCapacity;
         this.PERMIT_SECTION = permitSection;
+        this.DRINK_CAN_BE_TOGETHER = drinksCanBeTogether;
     }
 
-    public void updateConfig(Integer id, Double maxAlcoholicCapacity, Double maxNonAlcoholicCapacity, Set<String> permitSection) {
-        initializeConfig(id, maxAlcoholicCapacity, maxNonAlcoholicCapacity, permitSection);
+    public void updateConfig(Integer id, Double maxAlcoholicCapacity, Double maxNonAlcoholicCapacity, Set<String> permitSection, boolean drinksCanBeTogether) {
+        initializeConfig(id, maxAlcoholicCapacity, maxNonAlcoholicCapacity, permitSection, drinksCanBeTogether);
     }
 
     public Double maxCapacity(DrinkType drinkType) {

@@ -20,7 +20,7 @@ public class DrinkConfigService {
     public DrinkConfig patchingDrinkConfig(DrinkConfigDTO drinkConfigDTO) {
         return Stream.of(convertDrinkConfig(drinkConfigDTO))
                 .map(drinkConfig -> {
-                    drinkConfig.updateConfig(drinkConfig.getId(), drinkConfig.getMAX_ALCOHOLIC_CAPACITY(), drinkConfig.getMAX_NONALCOHOLIC_CAPACITY(), drinkConfig.getPERMIT_SECTION());
+                    drinkConfig.updateConfig(drinkConfig.getId(), drinkConfig.getMAX_ALCOHOLIC_CAPACITY(), drinkConfig.getMAX_NONALCOHOLIC_CAPACITY(), drinkConfig.getPERMIT_SECTION(), drinkConfig.isDRINK_CAN_BE_TOGETHER());
                     return drinkConfigRepository.save(drinkConfig);
                 })
                 .findFirst()
@@ -29,7 +29,7 @@ public class DrinkConfigService {
 
     private DrinkConfig convertDrinkConfig(DrinkConfigDTO drinkConfigDTO) {
         return Stream.of(drinkConfigDTO)
-                .map(DTO -> new DrinkConfig(drinkConfigDTO.id(), drinkConfigDTO.MAX_ALCOHOLIC_CAPACITY(), drinkConfigDTO.MAX_NONALCOHOLIC_CAPACITY(), drinkConfigDTO.PERMIT_SECTION()))
+                .map(DTO -> new DrinkConfig(drinkConfigDTO.id(), drinkConfigDTO.MAX_ALCOHOLIC_CAPACITY(), drinkConfigDTO.MAX_NONALCOHOLIC_CAPACITY(), drinkConfigDTO.PERMIT_SECTION(), drinkConfigDTO.DRINK_CAN_BE_TOGETHER()))
                 .findFirst()
                 .orElseThrow();
     }

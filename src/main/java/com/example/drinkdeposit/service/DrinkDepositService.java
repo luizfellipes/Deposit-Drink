@@ -52,7 +52,7 @@ public class DrinkDepositService {
         return repository.findAll()
                 .stream()
                 .collect(Collectors.toMap(
-                        drinkDeposit -> "Section: " + drinkDeposit.getSection() + ", DrinkType: " + drinkDeposit.getDrink().getDrinkType() + ", Volume",
+                        drinkDeposit -> "Section: " + drinkDeposit.getSection() + ", DrinkType: " + drinkDeposit.getDrink().getDrinkType() + ", VolumeTotalInSection",
                         this::totalVolumeOnSection,
                         (existing, replacement) -> existing))
                 .entrySet()
@@ -67,7 +67,7 @@ public class DrinkDepositService {
                 .collect(Collectors.toMap(
                         drinkDeposit -> "Section: " + drinkDeposit.getSection(),
                         this::totalVolumeOnSection,
-                        Double::sum
+                        Double::max
                 ));
 
         drinkConfig.getPERMIT_SECTION().forEach(section -> sectionVolumeMap.putIfAbsent("Section: " + section, 0.0));
@@ -98,16 +98,18 @@ public class DrinkDepositService {
     }
 
     private boolean drinkTypeEquals(DrinkDeposit drinkDeposit) {
-        return Stream.of(drinkDeposit)
-                .filter(drinkDeposit1 -> drinkDeposit1.getSection().equalsIgnoreCase(drinkDeposit.getSection()))
-                .findFirst()
+        return repository.findBySectionOrderByIdDesc(drinkDeposit.getSection())
+                .stream()
                 .map(drinkDeposit1 -> drinkDeposit1.getDrink().getDrinkType().equals(drinkDeposit.getDrink().getDrinkType()))
-                .orElse(true);
+                .findFirst()
+                .orElse(!drinkConfig.isDRINK_CAN_BE_TOGETHER());
     }
 
     private void sectionDrinkIsEquals(DrinkDeposit drinkDeposit) {
         if (sectionExists(drinkDeposit) && !drinkTypeEquals(drinkDeposit)) {
-            throw new IlegalRequest("Não é permitido adicionar bebidas alcoólicas e não alcoólicas na mesma seção!");
+            if (!drinkConfig.isDRINK_CAN_BE_TOGETHER()) {
+                throw new IlegalRequest("Não é permitido adicionar bebidas alcoólicas e não alcoólicas na mesma seção!");
+            }
         }
     }
 
@@ -120,9 +122,7 @@ public class DrinkDepositService {
     private void entryAndExitOfstock(DrinkDeposit drinkDeposit) {
         double totalVolume = totalVolumeOnSection(drinkDeposit);
         double volume = drinkDeposit.getDrink().getVolume();
-        double actualVolume = drinkDeposit.getMovimentType().equals(MovimentType.ENTRY)
-                ? totalVolume + volume
-                : totalVolume - volume;
+        double actualVolume = totalVolume + (drinkDeposit.getMovimentType().equals(MovimentType.ENTRY) ? volume : -volume);
 
         if (totalVolume <= 0 && drinkDeposit.getMovimentType().equals(MovimentType.EXIT)) {
             throw new IlegalRequest("não é possivel realizar uma saida sem possuir volume no estoque !");
