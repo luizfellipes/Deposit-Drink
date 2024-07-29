@@ -21,13 +21,13 @@ public class DrinkDepositService {
 
     private final DrinkDepositRepository repository;
     private final DrinkHistoryService drinkHistoryService;
-    private final DrinkConfig drinkConfig;
+    private final DrinkConfigService drinkConfigService;
 
 
-    public DrinkDepositService(DrinkDepositRepository repository, DrinkHistoryService drinkHistoryService, DrinkConfig drinkConfig) {
+    public DrinkDepositService(DrinkDepositRepository repository, DrinkHistoryService drinkHistoryService, DrinkConfigService drinkConfigService) {
         this.repository = repository;
         this.drinkHistoryService = drinkHistoryService;
-        this.drinkConfig = drinkConfig;
+        this.drinkConfigService = drinkConfigService;
     }
 
     public DrinkDeposit save(DrinkDepositDTO drinkDepositDTO) {
@@ -70,7 +70,7 @@ public class DrinkDepositService {
                         Double::max
                 ));
 
-        drinkConfig.getPERMIT_SECTION().forEach(section -> sectionVolumeMap.putIfAbsent("Section: " + section, 0.0));
+        drinkConfigService.getDrinkConfig().getPERMIT_SECTION().forEach(section -> sectionVolumeMap.putIfAbsent("Section: " + section, 0.0));
 
         return sectionVolumeMap.entrySet()
                 .stream()
@@ -92,8 +92,8 @@ public class DrinkDepositService {
     }
 
     private void verifySectionPermit(DrinkDeposit drinkDeposit) {
-        if (!drinkConfig.getPERMIT_SECTION().contains(drinkDeposit.getSection().toUpperCase())) {
-            throw new EntryError("Seção não permitida! Use apenas seções de: " + drinkConfig.getPERMIT_SECTION());
+        if (!drinkConfigService.getDrinkConfig().getPERMIT_SECTION().contains(drinkDeposit.getSection().toUpperCase())) {
+            throw new EntryError("Seção não permitida! Use apenas seções de: " + drinkConfigService.getDrinkConfig().getPERMIT_SECTION());
         }
     }
 
@@ -102,20 +102,20 @@ public class DrinkDepositService {
                 .stream()
                 .map(drinkDeposit1 -> drinkDeposit1.getDrink().getDrinkType().equals(drinkDeposit.getDrink().getDrinkType()))
                 .findFirst()
-                .orElse(!drinkConfig.isDRINK_CAN_BE_TOGETHER());
+                .orElse(!drinkConfigService.getDrinkConfig().isDRINK_CAN_BE_TOGETHER());
     }
 
     private void sectionDrinkIsEquals(DrinkDeposit drinkDeposit) {
         if (sectionExists(drinkDeposit) && !drinkTypeEquals(drinkDeposit)) {
-            if (!drinkConfig.isDRINK_CAN_BE_TOGETHER()) {
+            if (!drinkConfigService.getDrinkConfig().isDRINK_CAN_BE_TOGETHER()) {
                 throw new IlegalRequest("Não é permitido adicionar bebidas alcoólicas e não alcoólicas na mesma seção!");
             }
         }
     }
 
     private void excessVolume(DrinkDeposit drinkDeposit) {
-        if (drinkDeposit.getMovimentType().equals(MovimentType.ENTRY) && totalVolumeOnSection(drinkDeposit) + drinkDeposit.getDrink().getVolume() > drinkConfig.maxCapacity(drinkDeposit.getDrink().getDrinkType())) {
-            throw new EntryError("Não foi possível adicionar na seção pois o volume total foi excedente! " + "Volume maximo na seção: " + drinkConfig.maxCapacity(drinkDeposit.getDrink().getDrinkType()));
+        if (drinkDeposit.getMovimentType().equals(MovimentType.ENTRY) && totalVolumeOnSection(drinkDeposit) + drinkDeposit.getDrink().getVolume() > drinkConfigService.getDrinkConfig().maxCapacity(drinkDeposit.getDrink().getDrinkType())) {
+            throw new EntryError("Não foi possível adicionar na seção pois o volume total foi excedente! " + "Volume maximo na seção: " + drinkConfigService.getDrinkConfig().maxCapacity(drinkDeposit.getDrink().getDrinkType()));
         }
     }
 
