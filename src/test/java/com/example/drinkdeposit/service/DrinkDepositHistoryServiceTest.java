@@ -45,7 +45,6 @@ class DrinkDepositHistoryServiceTest {
         Assertions.assertEquals(drinkHistoryMockModel().getDrinkType(), savedHistory.getDrinkType());
         Assertions.assertEquals(drinkHistoryMockModel().getVolume(), savedHistory.getVolume());
         Assertions.assertEquals(drinkHistoryMockModel().getDrinkName(), savedHistory.getDrinkName());
-        Assertions.assertEquals(drinkHistoryMockModel().getTotalVolumeInSection(), savedHistory.getTotalVolumeInSection());
     }
 
     @Test

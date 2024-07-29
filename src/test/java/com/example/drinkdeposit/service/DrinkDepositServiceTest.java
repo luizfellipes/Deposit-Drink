@@ -4,6 +4,7 @@ import com.example.drinkdeposit.exceptions.EntryError;
 import com.example.drinkdeposit.exceptions.IlegalRequest;
 import com.example.drinkdeposit.model.dto.DrinkDepositDTO;
 import com.example.drinkdeposit.model.entities.DrinkDeposit;
+import com.example.drinkdeposit.repositories.DrinkConfigRepository;
 import com.example.drinkdeposit.repositories.DrinkDepositHistoryRepository;
 import com.example.drinkdeposit.repositories.DrinkDepositRepository;
 import org.junit.jupiter.api.Assertions;
@@ -16,7 +17,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.*;
 
 import static com.example.drinkdeposit.MocksDTO.DrinkDepositDTOMock.*;
-import static com.example.drinkdeposit.MocksModel.DrinkConfigMockModel.drinkConfigModel;
 import static com.example.drinkdeposit.MocksModel.DrinkDepositMockModel.*;
 import static com.example.drinkdeposit.MocksModel.DrinkHistoryMockModel.drinkHistoryMockModel;
 import static org.mockito.ArgumentMatchers.any;
@@ -28,13 +28,15 @@ class DrinkDepositServiceTest {
     private DrinkDepositService drinkDepositService;
     private DrinkDepositRepository drinkDepositRepository;
     private DrinkDepositHistoryRepository drinkDepositHistoryRepository;
+    private DrinkConfigRepository drinkConfigRepository;
 
     @BeforeEach
     void setUp() {
         this.drinkDepositRepository = mock(DrinkDepositRepository.class);
         this.drinkDepositHistoryRepository = mock(DrinkDepositHistoryRepository.class);
+        this.drinkConfigRepository = mock(DrinkConfigRepository.class);
         DrinkHistoryService drinkHistoryService = new DrinkHistoryService(drinkDepositHistoryRepository);
-        this.drinkDepositService = new DrinkDepositService(drinkDepositRepository, drinkHistoryService, drinkConfigModel());
+        this.drinkDepositService = new DrinkDepositService(drinkDepositRepository, drinkHistoryService, new DrinkConfigService(drinkConfigRepository));
     }
 
     @Test
@@ -57,7 +59,9 @@ class DrinkDepositServiceTest {
     @Test
     void makeSaveWithNoSuccesfuly() {
         DrinkDeposit mockModel = drinkDepositMockModel();
+        when(drinkDepositHistoryRepository.save(any())).thenReturn(drinkHistoryMockModel());
         when(drinkDepositRepository.save(mockModel)).thenThrow(new IlegalRequest());
+
 
         Executable save = () -> drinkDepositService.save(drinkDepositDtoMockExit());
 
@@ -103,6 +107,7 @@ class DrinkDepositServiceTest {
     @Test
     void makeTestExitWithoutVolume() {
         DrinkDeposit mockModel = drinkDepositMockModelSectionOutNonAcloholic();
+        when(drinkDepositHistoryRepository.save(any())).thenReturn(drinkHistoryMockModel());
         when(drinkDepositRepository.save(mockModel)).thenThrow(new IlegalRequest());
 
         Executable save = () -> drinkDepositService.save(drinkDepositDtoMockExit());
@@ -124,6 +129,7 @@ class DrinkDepositServiceTest {
     @Test
     void makeTestOnSectionExists() {
         DrinkDepositDTO DTO = drinkDepositDtoMockSectionOut();
+        when(drinkDepositHistoryRepository.save(any())).thenReturn(drinkHistoryMockModel());
         when(drinkDepositRepository.save(any())).thenThrow(new EntryError());
 
         Executable save = () -> drinkDepositService.save(DTO);
@@ -149,6 +155,7 @@ class DrinkDepositServiceTest {
     @Test
     void makeTestOnExcessVolume() {
         DrinkDeposit mockModel = drinkDepositMockModelSectionOutNonAcloholic();
+        when(drinkDepositHistoryRepository.save(any())).thenReturn(drinkHistoryMockModel());
         when(drinkDepositRepository.save(mockModel)).thenThrow(new EntryError());
 
         Executable save = () -> drinkDepositService.save(drinkDepositDtoMockEntryExcessVolume());
@@ -159,6 +166,7 @@ class DrinkDepositServiceTest {
     @Test
     void makeTestOnEntryAndExitOfstock() {
         DrinkDeposit mockModel1 = drinkDepositMockModelSectionOutNonAcloholic();
+        when(drinkDepositHistoryRepository.save(any())).thenReturn(drinkHistoryMockModel());
         when(drinkDepositRepository.save(mockModel1)).thenThrow(new IlegalRequest());
 
         Executable save1 = () -> drinkDepositService.save(drinkDepositDtoMockExit());

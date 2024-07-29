@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.Set;
+import java.util.List;
 
 @ExtendWith(SpringExtension.class)
 class DrinkConfigTest {
@@ -20,7 +20,8 @@ class DrinkConfigTest {
 
         Assertions.assertEquals(configTest.maxCapacity(DrinkType.ALCOHOLIC), 500);
         Assertions.assertEquals(configTest.maxCapacity(DrinkType.NONALCOHOLIC), 400);
-        Assertions.assertEquals(configTest.getPERMIT_SECTION(), Set.of("A", "B", "C", "D", "E"));
+        Assertions.assertEquals(configTest.getPERMIT_SECTION(), List.of("A", "B", "C", "D", "E"));
+        Assertions.assertFalse(configTest.isDRINK_CAN_BE_TOGETHER());
     }
 
     @Test
@@ -31,7 +32,8 @@ class DrinkConfigTest {
 
         Assertions.assertNotEquals(configTest.maxCapacity(DrinkType.ALCOHOLIC), 400);
         Assertions.assertNotEquals(configTest.maxCapacity(DrinkType.NONALCOHOLIC), 500);
-        Assertions.assertNotEquals(configTest.getPERMIT_SECTION(), Set.of("A", "B", "C", "D"));
+        Assertions.assertNotEquals(configTest.getPERMIT_SECTION(), List.of("A", "B", "C", "D"));
+        Assertions.assertNotEquals(configTest.isDRINK_CAN_BE_TOGETHER(), true);
     }
 
 }

@@ -20,11 +20,11 @@ public class DrinkConfigService {
     }
 
     public DrinkConfig patchingDrinkConfig(DrinkConfigDTO drinkConfigDTO) {
-        DrinkConfig drinkConfigExistis = getDrinkConfig();
+        DrinkConfig drinkConfigExists = getDrinkConfig();
         return Stream.of(convertDrinkConfig(drinkConfigDTO))
                 .map(drinkConfig -> {
-                    copyProperties(drinkConfig, drinkConfigExistis);
-                    return drinkConfigRepository.save(drinkConfigExistis);
+                    copyProperties(drinkConfig, drinkConfigExists);
+                    return drinkConfigRepository.save(drinkConfigExists);
                 })
                 .findFirst()
                 .orElseThrow();
