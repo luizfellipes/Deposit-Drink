@@ -10,12 +10,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+
+import java.util.Optional;
 
 import static com.example.drinkdeposit.MocksDTO.DrinkConfigDTOMock.drinkConfigDTOMock;
 import static com.example.drinkdeposit.MocksModel.DrinkConfigMockModel.drinkConfigModel;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 class DrinkConfigServiceTest {
@@ -46,8 +48,29 @@ class DrinkConfigServiceTest {
     void makePatchingWithNoSuccesfuly() {
         when(drinkConfigRepository.save(any())).thenThrow(new EntryError());
 
-        Executable patching =()-> drinkConfigService.patchingDrinkConfig(drinkConfigDTOMock());
+        Executable patching = () -> drinkConfigService.patchingDrinkConfig(drinkConfigDTOMock());
         Assertions.assertThrows(EntryError.class, patching);
     }
+
+    @Test
+    void makeATestInGetDrinkConfig() {
+        when(drinkConfigRepository.findById(1)).thenReturn(Optional.of(drinkConfigModel()));
+
+        Optional<DrinkConfig> config = Optional.ofNullable(drinkConfigService.getDrinkConfig());
+
+        Assertions.assertTrue(config.isPresent());
+    }
+
+    @Test
+    void makeATestInGetDrinkConfigError() {
+        when(drinkConfigRepository.findById(1)).thenReturn(Optional.empty());
+
+        DrinkConfig config = drinkConfigService.getDrinkConfig();
+        Assertions.assertNotNull(config);
+
+        DrinkConfig expectedConfig = new DrinkConfig();
+        Assertions.assertNotEquals(expectedConfig, config);
+    }
+
 
 }

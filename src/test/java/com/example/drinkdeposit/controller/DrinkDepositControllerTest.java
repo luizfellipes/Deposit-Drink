@@ -110,4 +110,24 @@ class DrinkDepositControllerTest {
                 .andReturn();
     }
 
+    @Test
+    void makeTestOnGetAvailableSections() throws Exception {
+        when(drinkDepositService.availableSections()).thenReturn(List.of());
+
+        mockMvc.perform(get("/drinkdeposit/availableSections"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+    }
+
+    @Test
+    void doTestErrorOnGetAvailableSections() throws Exception {
+        doThrow(IlegalRequest.class).when(drinkDepositService).availableSections();
+
+        mockMvc.perform(get("/drinkdeposit/availableSections"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andReturn();
+    }
+
 }

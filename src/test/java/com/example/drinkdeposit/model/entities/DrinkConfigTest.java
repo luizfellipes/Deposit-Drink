@@ -36,4 +36,6 @@ class DrinkConfigTest {
         Assertions.assertNotEquals(configTest.isDRINK_CAN_BE_TOGETHER(), true);
     }
 
+
+
 }
