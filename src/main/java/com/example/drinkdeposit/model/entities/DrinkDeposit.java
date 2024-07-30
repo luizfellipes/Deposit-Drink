@@ -27,11 +27,6 @@ public class DrinkDeposit implements Serializable {
     public DrinkDeposit() {
     }
 
-    public DrinkDeposit(Integer id, Drink drink) {
-        this.id = id;
-        this.drink = drink;
-    }
-
     public DrinkDeposit(LocalDateTime data, String responsible, String section, MovimentType movimentType, Drink drink) {
         this.data = data;
         this.responsible = responsible;

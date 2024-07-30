@@ -3,13 +3,11 @@ package com.example.drinkdeposit.model.entities;
 import com.example.drinkdeposit.model.enums.DrinkType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "TB_DRINK_CONFIG")

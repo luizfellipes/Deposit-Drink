@@ -4,7 +4,6 @@ package com.example.drinkdeposit.service;
 import com.example.drinkdeposit.exceptions.EntryError;
 import com.example.drinkdeposit.exceptions.IlegalRequest;
 import com.example.drinkdeposit.model.dto.DrinkDepositDTO;
-import com.example.drinkdeposit.model.entities.DrinkConfig;
 import com.example.drinkdeposit.model.entities.DrinkDeposit;
 import com.example.drinkdeposit.model.entities.Drink;
 import com.example.drinkdeposit.model.enums.MovimentType;

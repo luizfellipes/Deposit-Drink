@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin (origins = "*")
+@CrossOrigin (origins = "http://localhost:8080")
 @RequestMapping("/drinkdeposit")
 public class DrinkConfigController {
 

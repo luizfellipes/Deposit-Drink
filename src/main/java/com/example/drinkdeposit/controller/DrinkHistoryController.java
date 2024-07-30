@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:8080")
 @RequestMapping("/drinkdeposit")
 public class DrinkHistoryController {
 
@@ -23,10 +23,9 @@ public class DrinkHistoryController {
     }
 
     @GetMapping("/history")
-    public ResponseEntity<List<DrinkHistory>> getAll(){
+    public ResponseEntity<List<DrinkHistory>> getAll() {
         return ResponseEntity.status(HttpStatus.OK).body(drinkHistoryService.getAll());
     }
-
 
 
 }
