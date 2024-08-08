@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.List;
 
 import static com.example.drinkdeposit.MocksDTO.DrinkDepositDTOMock.drinkDepositDtoMockExit;
+import static com.example.drinkdeposit.MocksDTO.DrinkDepositDTOMock.drinkDepositDtoMockWithoutParams;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -63,6 +64,18 @@ class DrinkDepositControllerTest {
         mockMvc.perform(post("/drinkdeposit/save")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(drinkDepositDtoMockExit())))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andReturn();
+    }
+
+    @Test
+    void doTestErrorOnNewCreateWhitoutParans() throws Exception {
+        doThrow(IlegalRequest.class).when(drinkDepositService).save(drinkDepositDtoMockWithoutParams());
+
+        mockMvc.perform(post("/drinkdeposit/save")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(drinkDepositDtoMockWithoutParams())))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andReturn();

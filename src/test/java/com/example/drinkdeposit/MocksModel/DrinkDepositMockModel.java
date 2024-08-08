@@ -15,6 +15,12 @@ public abstract class DrinkDepositMockModel {
 
     }
 
+    public static DrinkDeposit drinkDepositMockModelWithoutParams() {
+        return new DrinkDeposit(LocalDateTime.parse("2021-01-01T18:30:00"), null, null, MovimentType.ENTRY,
+                new Drink(DrinkType.ALCOHOLIC, "Beer", 1.0));
+
+    }
+
     public static DrinkDeposit drinkDepositMockModelSectionOut() {
         return new DrinkDeposit(LocalDateTime.parse("2021-01-01T18:30:00"), "String", "F", MovimentType.ENTRY,
                 new Drink(DrinkType.ALCOHOLIC, "Beer", 3500.0));

@@ -35,10 +35,6 @@ public class Drink implements Serializable {
         this.totalVolumeInSection = 0.0;
     }
 
-    public Integer getId() {
-        return id;
-    }
-
     public DrinkType getDrinkType() {
         return drinkType;
     }

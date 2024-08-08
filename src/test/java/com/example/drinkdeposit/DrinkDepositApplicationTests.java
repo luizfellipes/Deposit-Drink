@@ -10,6 +10,7 @@ class DrinkDepositApplicationTests {
 	@Test
 	void contextLoads() {
 		Assertions.assertTrue(true);
+		DrinkDepositApplication.main(new String[] {});
 	}
 
 }

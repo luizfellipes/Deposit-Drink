@@ -28,13 +28,12 @@ class DrinkDepositServiceTest {
     private DrinkDepositService drinkDepositService;
     private DrinkDepositRepository drinkDepositRepository;
     private DrinkDepositHistoryRepository drinkDepositHistoryRepository;
-    private DrinkConfigRepository drinkConfigRepository;
 
     @BeforeEach
     void setUp() {
         this.drinkDepositRepository = mock(DrinkDepositRepository.class);
         this.drinkDepositHistoryRepository = mock(DrinkDepositHistoryRepository.class);
-        this.drinkConfigRepository = mock(DrinkConfigRepository.class);
+        DrinkConfigRepository drinkConfigRepository = mock(DrinkConfigRepository.class);
         DrinkHistoryService drinkHistoryService = new DrinkHistoryService(drinkDepositHistoryRepository);
         this.drinkDepositService = new DrinkDepositService(drinkDepositRepository, drinkHistoryService, new DrinkConfigService(drinkConfigRepository));
     }
@@ -59,6 +58,18 @@ class DrinkDepositServiceTest {
     @Test
     void makeSaveWithNoSuccesfuly() {
         DrinkDeposit mockModel = drinkDepositMockModel();
+        when(drinkDepositHistoryRepository.save(any())).thenReturn(drinkHistoryMockModel());
+        when(drinkDepositRepository.save(mockModel)).thenThrow(new IlegalRequest());
+
+
+        Executable save = () -> drinkDepositService.save(drinkDepositDtoMockExit());
+
+        Assertions.assertThrows(IlegalRequest.class, save);
+    }
+
+    @Test
+    void makeSaveWithNoSuccesfulyWithoutParams() {
+        DrinkDeposit mockModel = drinkDepositMockModelWithoutParams();
         when(drinkDepositHistoryRepository.save(any())).thenReturn(drinkHistoryMockModel());
         when(drinkDepositRepository.save(mockModel)).thenThrow(new IlegalRequest());
 
@@ -150,6 +161,7 @@ class DrinkDepositServiceTest {
 
         Assertions.assertNotEquals(save1, save);
         Assertions.assertThrows(IlegalRequest.class, save1);
+        Assertions.assertThrows(IlegalRequest.class, save);
     }
 
     @Test
@@ -173,6 +185,5 @@ class DrinkDepositServiceTest {
 
         Assertions.assertThrows(IlegalRequest.class, save1);
     }
-
 
 }
