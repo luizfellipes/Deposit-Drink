@@ -67,19 +67,14 @@ public class DrinkDepositService {
 
     public List<Map<String, Double>> availableSections() {
         log.info("showing all free sections");
-        Map<String, Double> sectionVolumeMap = repository.findAll()
-                .stream()
-                .collect(Collectors.toMap(
-                        drinkDeposit -> "Section: " + drinkDeposit.getSection(),
-                        this::totalVolumeOnSection,
-                        Double::max
-                ));
-
-        drinkConfigService.getDrinkConfig().getPERMIT_SECTION().forEach(section -> sectionVolumeMap.putIfAbsent("Section: " + section, 0.0));
-
-        return sectionVolumeMap.entrySet()
-                .stream()
-                .map(entry -> Map.of(entry.getKey(), entry.getValue()))
+        return drinkConfigService.getDrinkConfig().getPERMIT_SECTION().stream()
+                .map(section -> Map.of("Section: " + section,
+                        repository.findAll()
+                                .stream()
+                                .filter(drinkDeposit -> drinkDeposit.getSection().equals(section))
+                                .mapToDouble(this::totalVolumeOnSection)
+                                .max()
+                                .orElse(0.0)))
                 .toList();
     }
 

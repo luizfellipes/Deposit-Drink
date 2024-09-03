@@ -1,6 +1,5 @@
 package com.example.drinkdeposit.exceptions;
 
-import com.example.drinkdeposit.controller.DrinkHistoryController;
 import com.example.drinkdeposit.personalizedResponse.PersonalizedResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
